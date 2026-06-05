@@ -10,7 +10,7 @@ function Squad({
   const squadScore = userXp + 1480
 
   return (
-    <section className="panel squad-panel">
+    <section className="panel squad-panel" id="squad">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Squad</p>

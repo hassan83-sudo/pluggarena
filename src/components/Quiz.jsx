@@ -63,7 +63,7 @@ function Quiz({
   }
 
   return (
-    <section className="panel quiz-panel">
+    <section className="panel quiz-panel" id="quiz">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Quizbank</p>

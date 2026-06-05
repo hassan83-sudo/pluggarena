@@ -9,7 +9,7 @@ function ProfileSettings({ onResetDemoData }) {
   }
 
   return (
-    <section className="panel profile-settings-panel">
+    <section className="panel profile-settings-panel" id="profile">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Profil</p>

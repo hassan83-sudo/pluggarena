@@ -6,7 +6,7 @@ const rewards = [
 
 function Rewards({ xp }) {
   return (
-    <section className="panel rewards-panel">
+    <section className="panel rewards-panel" id="rewards">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Rewards</p>

@@ -1,4 +1,5 @@
 function Dashboard({
+  children,
   hasClaimedToday,
   level,
   onClaimDailyReward,
@@ -25,6 +26,7 @@ function Dashboard({
         <p className="subtitle">
           Hej {username}, välj ämne, samla XP och bygg streak med ditt squad.
         </p>
+        {children}
       </div>
 
       <div className="stats-grid" aria-label="Din progression">

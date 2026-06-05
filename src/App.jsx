@@ -37,6 +37,16 @@ const initialProgress = {
   xp: 320,
 }
 
+const navigationItems = [
+  { id: 'arena', label: 'Arena', view: 'arena' },
+  { id: 'quiz', label: 'Quiz', view: 'arena' },
+  { id: 'battle', label: 'Battle', view: 'battle' },
+  { id: 'assignments', label: 'Uppgifter', view: 'assignments' },
+  { id: 'squad', label: 'Squad', view: 'arena' },
+  { id: 'rewards', label: 'Belöningar', view: 'arena' },
+  { id: 'profile', label: 'Profil', view: 'arena' },
+]
+
 function getUserKey(user) {
   return user?.id || user?.email || 'local'
 }
@@ -270,6 +280,8 @@ function App() {
     readStoredValue(storageKeys.demoUsers, defaultDemoUsers),
   )
   const [activeView, setActiveView] = useState('arena')
+  const [activeSection, setActiveSection] = useState('arena')
+  const [scrollTarget, setScrollTarget] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const todayKey = getTodayKey()
@@ -399,6 +411,28 @@ function App() {
       authListener.subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    if (!scrollTarget) {
+      return undefined
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(scrollTarget)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+      setScrollTarget('')
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [activeView, scrollTarget])
+
+  function navigateToSection(item) {
+    setActiveView(item.view)
+    setActiveSection(item.id)
+    setScrollTarget(item.id)
+  }
 
   function persistProgress(nextProgress, nextSquad = squad) {
     setProgress(nextProgress)
@@ -583,6 +617,7 @@ function App() {
     setSelectedSubject('Matematik')
     setCurrentQuestion(null)
     setActiveView('arena')
+    setActiveSection('arena')
   }
 
   if (authStatus === 'loading') {
@@ -616,45 +651,38 @@ function App() {
         streak={progress.streak}
         username={progress.username}
         xp={progress.xp}
-      />
-
-      <nav className="app-view-tabs" aria-label="PluggArena vy">
-        <button
-          className={activeView === 'arena' ? 'active' : ''}
-          onClick={() => setActiveView('arena')}
-          type="button"
-        >
-          Arena
-        </button>
-        <button
-          className={activeView === 'battle' ? 'active' : ''}
-          onClick={() => setActiveView('battle')}
-          type="button"
-        >
-          Battle Mode
-        </button>
-        <button
-          className={activeView === 'assignments' ? 'active' : ''}
-          onClick={() => setActiveView('assignments')}
-          type="button"
-        >
-          Uppgifter
-        </button>
-      </nav>
+      >
+        <nav className="top-navigation" aria-label="PluggArena navigation">
+          {navigationItems.map((item) => (
+            <button
+              className={activeSection === item.id ? 'active' : ''}
+              key={item.id}
+              onClick={() => navigateToSection(item)}
+              type="button"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      </Dashboard>
 
       {activeView === 'assignments' ? (
-        <AssignmentUpload
-          user={{ id: user.id, name: progress.username }}
-        />
+        <div id="assignments" className="view-anchor">
+          <AssignmentUpload
+            user={{ id: user.id, name: progress.username }}
+          />
+        </div>
       ) : activeView === 'battle' ? (
-        <BattleMode
-          onAwardXp={awardBattleXp}
-          questionBank={questionBank}
-          subjects={subjects}
-          user={{ id: user.id, name: progress.username }}
-        />
+        <div id="battle" className="view-anchor">
+          <BattleMode
+            onAwardXp={awardBattleXp}
+            questionBank={questionBank}
+            subjects={subjects}
+            user={{ id: user.id, name: progress.username }}
+          />
+        </div>
       ) : (
-        <>
+        <section id="arena" className="arena-view">
           <section className="app-grid" aria-label="PluggArena innehåll">
             <section className="panel battle-entry-panel">
               <div>
@@ -666,10 +694,16 @@ function App() {
                 </p>
               </div>
               <div className="battle-entry-actions">
-                <button type="button" onClick={() => setActiveView('battle')}>
+                <button
+                  type="button"
+                  onClick={() => navigateToSection(navigationItems[2])}
+                >
                   Skapa battle
                 </button>
-                <button type="button" onClick={() => setActiveView('battle')}>
+                <button
+                  type="button"
+                  onClick={() => navigateToSection(navigationItems[2])}
+                >
                   Gå med via kod
                 </button>
               </div>
@@ -701,7 +735,7 @@ function App() {
             <Rewards xp={progress.xp} />
           </section>
           <ProfileSettings onResetDemoData={resetDemoData} />
-        </>
+        </section>
       )}
     </main>
   )
