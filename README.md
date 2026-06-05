@@ -1,16 +1,113 @@
-# React + Vite
+# PluggArena
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite-app för skolquiz, Battle Mode, AI Study Buddy och uppladdade skoluppgifter.
 
-Currently, two official plugins are available:
+## Lokal start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Skapa `.env.local` från `.env.example`:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+VITE_SUPABASE_URL=din_supabase_url
+VITE_SUPABASE_ANON_KEY=din_supabase_anon_key
+OPENAI_API_KEY=din_openai_api_nyckel
+OPENAI_MODEL=gpt-4.1-mini
+```
 
-## Expanding the ESLint configuration
+Utan Supabase används localStorage-fallback. Utan OpenAI-nyckel returnerar AI-rutterna pedagogiska fallback-ledtrådar.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Assignment Upload v1
+
+Vyn **Uppgifter** låter en inloggad användare:
+
+- ladda upp PDF, JPG, PNG eller WEBP
+- förhandsvisa filen
+- spara uppgiften till sitt konto
+- analysera filen med AI Study Buddy
+- visa ledtrådarna ett steg i taget
+
+Med Supabase sparas filen i den privata Storage-bucketen `assignments` och metadata i tabellen `assignments`. Lokalt sparas fil och metadata i localStorage.
+
+## Supabase: assignments
+
+Skapa en privat Storage-bucket med namnet `assignments`. Kör sedan följande i Supabase SQL Editor:
+
+```sql
+create table if not exists public.assignments (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text not null,
+  file_name text not null,
+  file_path text not null,
+  file_type text not null,
+  file_size bigint not null,
+  analysis jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.assignments enable row level security;
+
+create policy "Users can read own assignments"
+on public.assignments for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own assignments"
+on public.assignments for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can update own assignments"
+on public.assignments for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own assignments"
+on public.assignments for delete
+using (auth.uid() = user_id);
+
+create policy "Users can upload own assignment files"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'assignments'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+create policy "Users can read own assignment files"
+on storage.objects for select
+to authenticated
+using (
+  bucket_id = 'assignments'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+create policy "Users can delete own assignment files"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'assignments'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+```
+
+Appens befintliga Supabase-tabeller för profiler, quiz och battles behöver också vara installerade i projektet.
+
+## AI-rutter
+
+```text
+POST /api/study-buddy
+POST /api/analyze-assignment
+```
+
+`analyze-assignment` använder bildinput för bilder och filinput för PDF. Svaret innehåller en kort sammanfattning och 3-6 stegvisa ledtrådar.
+
+## Verifiering
+
+```bash
+npm run lint
+npm run build
+```

@@ -232,7 +232,7 @@
 
 .app-view-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 180px));
+  grid-template-columns: repeat(3, minmax(0, 180px));
   gap: 8px;
   margin: 0 0 16px;
 }
@@ -976,6 +976,244 @@ summary {
   font-weight: 800;
 }
 
+.assignment-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.assignment-upload-panel,
+.assignment-preview-panel {
+  min-height: 500px;
+}
+
+.assignment-dropzone {
+  display: grid;
+  place-items: center;
+  min-height: 170px;
+  border: 1px dashed rgba(141, 228, 255, 0.5);
+  border-radius: 8px;
+  padding: 24px;
+  color: #ffffff;
+  background: rgba(55, 229, 255, 0.06);
+  cursor: pointer;
+  text-align: center;
+}
+
+.assignment-dropzone input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.assignment-dropzone strong {
+  font-size: 20px;
+}
+
+.assignment-dropzone span,
+.assignment-title-field span,
+.assignment-file-meta span,
+.assignment-muted {
+  color: #91a0ba;
+}
+
+.assignment-title-field {
+  display: grid;
+  gap: 7px;
+  margin-top: 16px;
+  font-weight: 800;
+}
+
+.assignment-title-field input {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0 13px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.assignment-file-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.assignment-file-meta strong {
+  overflow: hidden;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assignment-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.assignment-actions button,
+.next-hint-button {
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.assignment-actions button:last-child {
+  color: #ffffff;
+  background: #7c5cff;
+}
+
+.assignment-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.assignment-status,
+.assignment-error {
+  margin: 13px 0 0;
+  font-weight: 800;
+}
+
+.assignment-status {
+  color: #6ee7b7;
+}
+
+.assignment-error {
+  color: #ffb4c2;
+}
+
+.assignment-preview-panel {
+  min-width: 0;
+}
+
+.assignment-empty-preview,
+.assignment-image-preview,
+.assignment-pdf-preview {
+  width: 100%;
+  min-height: 390px;
+  border-radius: 8px;
+}
+
+.assignment-empty-preview {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  padding: 24px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.045);
+  text-align: center;
+}
+
+.assignment-empty-preview p {
+  max-width: 350px;
+  margin: 8px 0 0;
+  color: #91a0ba;
+}
+
+.assignment-image-preview {
+  display: block;
+  max-height: 560px;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.assignment-pdf-preview {
+  border: 0;
+  background: #ffffff;
+}
+
+.assignment-summary {
+  margin: 0 0 16px;
+  color: #dce6f8;
+  line-height: 1.55;
+}
+
+.assignment-steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assignment-steps li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 11px;
+  align-items: start;
+  padding: 13px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.assignment-steps li > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 999px;
+  color: #07111f;
+  background: #ffd166;
+  font-weight: 1000;
+}
+
+.assignment-steps p {
+  margin: 4px 0 0;
+  color: #dce6f8;
+  line-height: 1.5;
+}
+
+.next-hint-button {
+  margin-top: 14px;
+  padding: 0 16px;
+}
+
+.assignment-list {
+  display: grid;
+  gap: 8px;
+}
+
+.assignment-list button {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.055);
+  text-align: left;
+}
+
+.assignment-list button.active {
+  background: rgba(141, 228, 255, 0.15);
+  outline: 1px solid rgba(141, 228, 255, 0.4);
+}
+
+.assignment-list button > span {
+  color: #8de4ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.assignment-list button > strong {
+  overflow: hidden;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assignment-list button > small {
+  color: #91a0ba;
+}
+
 @media (max-width: 900px) {
   .dashboard,
   .stats-grid {
@@ -1000,6 +1238,10 @@ summary {
   }
 
   .battle-entry-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -1027,7 +1269,7 @@ summary {
   }
 
   .app-view-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .battle-entry-actions {
@@ -1036,6 +1278,26 @@ summary {
 
   .profile-settings-content {
     grid-template-columns: 1fr;
+  }
+
+  .assignment-upload-panel,
+  .assignment-preview-panel {
+    min-height: auto;
+  }
+
+  .assignment-actions,
+  .assignment-list button {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-list button > small {
+    justify-self: start;
+  }
+
+  .assignment-empty-preview,
+  .assignment-image-preview,
+  .assignment-pdf-preview {
+    min-height: 300px;
   }
 
   .battle-subjects,

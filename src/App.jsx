@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
+import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
@@ -632,9 +633,20 @@ function App() {
         >
           Battle Mode
         </button>
+        <button
+          className={activeView === 'assignments' ? 'active' : ''}
+          onClick={() => setActiveView('assignments')}
+          type="button"
+        >
+          Uppgifter
+        </button>
       </nav>
 
-      {activeView === 'battle' ? (
+      {activeView === 'assignments' ? (
+        <AssignmentUpload
+          user={{ id: user.id, name: progress.username }}
+        />
+      ) : activeView === 'battle' ? (
         <BattleMode
           onAwardXp={awardBattleXp}
           questionBank={questionBank}
