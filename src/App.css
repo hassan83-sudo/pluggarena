@@ -1135,6 +1135,62 @@ summary {
   line-height: 1.55;
 }
 
+.assignment-analysis-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.assignment-analysis-meta span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #07111f;
+  background: #8de4ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.assignment-analysis-meta strong {
+  color: #ffffff;
+}
+
+.assignment-reading,
+.assignment-language-support {
+  margin-bottom: 14px;
+  padding: 13px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.assignment-reading > span {
+  color: #8de4ff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.assignment-reading p,
+.assignment-language-support p {
+  margin: 7px 0 0;
+  color: #dce6f8;
+  line-height: 1.5;
+}
+
+.assignment-language-support strong {
+  color: #ffd166;
+}
+
+.assignment-observations {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: #aeb9d1;
+  line-height: 1.45;
+}
+
 .assignment-steps {
   display: grid;
   gap: 10px;

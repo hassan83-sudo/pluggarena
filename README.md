@@ -28,6 +28,7 @@ Vyn **Uppgifter** låter en inloggad användare:
 - förhandsvisa filen
 - spara uppgiften till sitt konto
 - analysera filen med AI Study Buddy
+- identifiera ämne och uppgiftstyp från det synliga innehållet
 - visa ledtrådarna ett steg i taget
 
 Med Supabase sparas filen i den privata Storage-bucketen `assignments` och metadata i tabellen `assignments`. Lokalt sparas fil och metadata i localStorage.
@@ -103,7 +104,7 @@ POST /api/study-buddy
 POST /api/analyze-assignment
 ```
 
-`analyze-assignment` använder bildinput för bilder och filinput för PDF. Svaret innehåller en kort sammanfattning och 3-6 stegvisa ledtrådar.
+`analyze-assignment` använder bildinput för bilder och filinput för PDF. Vision-modellen läser uppgiftens synliga text, tal och symboler, identifierar ämne/uppgiftstyp och returnerar 3-6 konkreta ledtrådar utan att avslöja hela svaret.
 
 ## Verifiering
 

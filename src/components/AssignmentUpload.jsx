@@ -28,6 +28,12 @@ function formatFileSize(size) {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`
 }
 
+function normalizeAnalysis(value) {
+  return value && typeof value === 'object' && Array.isArray(value.steps)
+    ? value
+    : null
+}
+
 function AssignmentPreview({ assignment, previewUrl }) {
   if (!assignment || !previewUrl) {
     return (
@@ -94,7 +100,7 @@ function AssignmentUpload({ user }) {
   async function selectAssignment(assignment) {
     setError('')
     setSelectedAssignment(assignment)
-    setAnalysis(assignment.analysis || null)
+    setAnalysis(normalizeAnalysis(assignment.analysis))
     setVisibleSteps(1)
 
     try {
@@ -189,14 +195,18 @@ function AssignmentUpload({ user }) {
     try {
       const currentPreviewUrl =
         previewUrl || (await getAssignmentPreviewUrl(selectedAssignment))
+      const inlineFileData =
+        selectedAssignment.fileData ||
+        fileData ||
+        (currentPreviewUrl.startsWith('data:') ? currentPreviewUrl : '')
       const response = await fetch('/api/analyze-assignment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fileData: selectedAssignment.fileData || fileData,
+          fileData: inlineFileData,
           fileName: selectedAssignment.fileName,
           fileType: selectedAssignment.fileType,
-          fileUrl: selectedAssignment.fileData ? '' : currentPreviewUrl,
+          fileUrl: inlineFileData ? '' : currentPreviewUrl,
         }),
       })
 
@@ -206,7 +216,12 @@ function AssignmentUpload({ user }) {
 
       const data = await response.json()
 
-      if (!data.analysis?.summary || !Array.isArray(data.analysis.steps)) {
+      if (
+        !data.analysis?.subject ||
+        !data.analysis?.taskType ||
+        !data.analysis?.visibleContent ||
+        !Array.isArray(data.analysis.steps)
+      ) {
         throw new Error('AI Study Buddy returnerade ingen användbar analys.')
       }
 
@@ -315,7 +330,30 @@ function AssignmentUpload({ user }) {
 
         {analysis ? (
           <>
-            <p className="assignment-summary">{analysis.summary}</p>
+            <div className="assignment-analysis-meta">
+              <span>{analysis.subject}</span>
+              <strong>{analysis.taskType}</strong>
+            </div>
+            <div className="assignment-reading">
+              <span>AI läser uppgiften som</span>
+              <p>{analysis.visibleContent}</p>
+            </div>
+            <p className="assignment-summary">
+              {analysis.problemExplanation}
+            </p>
+            {analysis.languageSupport && (
+              <div className="assignment-language-support">
+                <strong>Språkstöd</strong>
+                <p>{analysis.languageSupport}</p>
+              </div>
+            )}
+            {analysis.observations?.length > 0 && (
+              <ul className="assignment-observations">
+                {analysis.observations.map((observation) => (
+                  <li key={observation}>{observation}</li>
+                ))}
+              </ul>
+            )}
             <ol className="assignment-steps">
               {analysis.steps.slice(0, visibleSteps).map((step, index) => (
                 <li key={`${index}-${step}`}>
