@@ -1191,6 +1191,42 @@ summary {
   line-height: 1.45;
 }
 
+.assignment-debug-panel {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(141, 228, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(7, 17, 31, 0.72);
+}
+
+.assignment-debug-panel > strong {
+  color: #8de4ff;
+  font-size: 13px;
+}
+
+.assignment-debug-panel dl {
+  display: grid;
+  gap: 7px;
+  margin: 10px 0 0;
+}
+
+.assignment-debug-panel dl div {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) minmax(0, 1.5fr);
+  gap: 12px;
+}
+
+.assignment-debug-panel dt {
+  color: #aeb9d1;
+}
+
+.assignment-debug-panel dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #ffffff;
+  font-weight: 800;
+}
+
 .assignment-steps {
   display: grid;
   gap: 10px;

@@ -10,6 +10,13 @@ import { isSupabaseConfigured } from '../lib/supabase.js'
 const maxSupabaseFileSize = 8 * 1024 * 1024
 const maxLocalFileSize = 3 * 1024 * 1024
 const acceptedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+const initialVisionDebug = {
+  envKeyStatus: 'unknown',
+  fallbackReason: '',
+  model: import.meta.env.VITE_OPENAI_VISION_MODEL || 'Serverns standardmodell',
+  openaiError: '',
+  routeStatus: 'not_requested',
+}
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -76,6 +83,7 @@ function AssignmentUpload({ user }) {
   const [error, setError] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [visionDebug, setVisionDebug] = useState(initialVisionDebug)
 
   useEffect(() => {
     let isMounted = true
@@ -191,6 +199,12 @@ function AssignmentUpload({ user }) {
     setIsAnalyzing(true)
     setError('')
     setStatus('AI Study Buddy analyserar uppgiften...')
+    setVisionDebug((current) => ({
+      ...current,
+      fallbackReason: '',
+      openaiError: '',
+      routeStatus: 'requesting',
+    }))
 
     try {
       const currentPreviewUrl =
@@ -209,12 +223,22 @@ function AssignmentUpload({ user }) {
           fileUrl: inlineFileData ? '' : currentPreviewUrl,
         }),
       })
+      const data = await response.json().catch(() => ({}))
+
+      setVisionDebug({
+        envKeyStatus: data.debug?.envKeyStatus || 'unknown',
+        fallbackReason: data.debug?.fallbackReason || '',
+        model: data.debug?.model || 'Okänd',
+        openaiError: data.debug?.openaiError || '',
+        routeStatus:
+          data.debug?.routeStatus || `unexpected_http_${response.status}`,
+      })
 
       if (!response.ok) {
-        throw new Error(`Analysen misslyckades med status ${response.status}.`)
+        throw new Error(
+          data.error || `Analysen misslyckades med status ${response.status}.`,
+        )
       }
-
-      const data = await response.json()
 
       if (
         !data.analysis?.subject ||
@@ -225,13 +249,15 @@ function AssignmentUpload({ user }) {
         throw new Error('AI Study Buddy returnerade ingen användbar analys.')
       }
 
+      if (data.source !== 'openai') {
+        throw new Error(
+          `API-rutten returnerade oväntad källa: ${data.source || 'saknas'}.`,
+        )
+      }
+
       setAnalysis(data.analysis)
       setVisibleSteps(1)
-      setStatus(
-        data.source === 'openai'
-          ? 'AI-analysen är klar.'
-          : 'Fallback-ledtrådar visas.',
-      )
+      setStatus('AI-analysen är klar med OpenAI Vision.')
 
       if (selectedAssignment.id) {
         await saveAssignmentAnalysis(selectedAssignment, data.analysis)
@@ -246,6 +272,14 @@ function AssignmentUpload({ user }) {
     } catch (analysisError) {
       setError(analysisError.message)
       setStatus('')
+      setVisionDebug((current) => ({
+        ...current,
+        openaiError: current.openaiError || analysisError.message,
+        routeStatus:
+          current.routeStatus === 'requesting'
+            ? 'route_unreachable'
+            : current.routeStatus,
+      }))
     } finally {
       setIsAnalyzing(false)
     }
@@ -305,6 +339,32 @@ function AssignmentUpload({ user }) {
 
         {status && <p className="assignment-status">{status}</p>}
         {error && <p className="assignment-error">{error}</p>}
+
+        <aside className="assignment-debug-panel">
+          <strong>Vision debug</strong>
+          <dl>
+            <div>
+              <dt>routeStatus</dt>
+              <dd>{visionDebug.routeStatus}</dd>
+            </div>
+            <div>
+              <dt>envKeyStatus</dt>
+              <dd>{visionDebug.envKeyStatus}</dd>
+            </div>
+            <div>
+              <dt>model</dt>
+              <dd>{visionDebug.model}</dd>
+            </div>
+            <div>
+              <dt>fallbackReason</dt>
+              <dd>{visionDebug.fallbackReason || 'Ingen'}</dd>
+            </div>
+            <div>
+              <dt>openaiError</dt>
+              <dd>{visionDebug.openaiError || 'Inget'}</dd>
+            </div>
+          </dl>
+        </aside>
       </section>
 
       <section className="panel assignment-preview-panel">

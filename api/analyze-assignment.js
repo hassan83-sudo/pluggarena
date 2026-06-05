@@ -52,21 +52,32 @@ function sanitizeText(value, maxLength = 1000) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : ''
 }
 
-function makeFallbackAnalysis(fileName) {
+function getModelName() {
+  return (
+    process.env.OPENAI_VISION_MODEL ||
+    process.env.OPENAI_MODEL ||
+    DEFAULT_MODEL
+  )
+}
+
+function makeDebugStatus({
+  envKeyStatus,
+  fallbackReason = '',
+  model,
+  openaiError = '',
+  routeStatus,
+}) {
   return {
-    subject: 'Okänt',
-    taskType: 'Kunde inte identifieras utan aktiv AI-analys',
-    visibleContent: `Filen ${fileName || 'du laddade upp'} är uppladdad, men innehållet har inte lästs av en vision-modell.`,
-    problemExplanation:
-      'Lägg till OPENAI_API_KEY för att läsa den faktiska uppgiften i bilden eller PDF-filen.',
-    languageSupport: '',
-    observations: ['Ingen bildanalys kördes eftersom OpenAI API saknas.'],
-    steps: [
-      'Läs uppgiftens rubrik och instruktion.',
-      'Markera de tal eller ord som hör ihop.',
-      'Försök ett första delsteg och kontrollera sedan metoden.',
-    ],
+    envKeyStatus,
+    fallbackReason,
+    model,
+    openaiError,
+    routeStatus,
   }
+}
+
+function logVisionStatus(message, details) {
+  console.info(`[api/analyze-assignment] ${message}`, details)
 }
 
 function extractResponseText(data) {
@@ -164,19 +175,63 @@ export default async function handler(request, response) {
   const fileName = sanitizeText(body.fileName, 200)
   const fileType = sanitizeText(body.fileType, 100)
   const fileUrl = sanitizeText(body.fileUrl, 4000)
+  const model = getModelName()
+  const hasApiKey = Boolean(process.env.OPENAI_API_KEY?.trim())
+  const envKeyStatus = hasApiKey ? 'configured' : 'missing'
+
+  logVisionStatus('Configuration', {
+    envKeyStatus,
+    model,
+    routeStatus: 'request_received',
+  })
 
   if (!fileName || !fileType || (!fileData && !fileUrl)) {
-    return response.status(400).json({ error: 'Assignment file is required' })
+    return response.status(400).json({
+      error: 'Assignment file is required',
+      debug: makeDebugStatus({
+        envKeyStatus,
+        fallbackReason: 'invalid_assignment_file',
+        model,
+        routeStatus: 'invalid_request',
+      }),
+    })
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return response.status(200).json({
-      analysis: makeFallbackAnalysis(fileName),
-      source: 'mock',
+  if (!hasApiKey) {
+    logVisionStatus('Fallback status', {
+      envKeyStatus,
+      fallbackReason: 'missing_openai_api_key',
+      routeStatus: 'configuration_error',
+    })
+
+    return response.status(503).json({
+      error: 'OpenAI API-nyckel saknas på servern',
+      debug: makeDebugStatus({
+        envKeyStatus,
+        fallbackReason: 'missing_openai_api_key',
+        model,
+        routeStatus: 'configuration_error',
+      }),
     })
   }
 
   try {
+    const fileContent = makeFileContent({
+      fileData,
+      fileName,
+      fileType,
+      fileUrl,
+    })
+
+    logVisionStatus('Vision request starting', {
+      envKeyStatus,
+      fileInputType: fileContent.type,
+      fileName,
+      fileSource: fileUrl ? 'url' : 'data',
+      imageIncluded: fileContent.type === 'input_image',
+      model,
+    })
+
     const openaiResponse = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -209,15 +264,12 @@ export default async function handler(request, response) {
                   'Kontrollera att varje ledtråd hänvisar till något konkret som syns i uppgiften.',
                 ].join(' '),
               },
-              makeFileContent({ fileData, fileName, fileType, fileUrl }),
+              fileContent,
             ],
           },
         ],
         max_output_tokens: 900,
-        model:
-          process.env.OPENAI_VISION_MODEL ||
-          process.env.OPENAI_MODEL ||
-          DEFAULT_MODEL,
+        model,
         text: {
           format: {
             type: 'json_schema',
@@ -239,17 +291,41 @@ export default async function handler(request, response) {
     const data = await openaiResponse.json()
     const analysis = parseAnalysis(extractResponseText(data))
 
-    return response.status(200).json({ analysis, source: 'openai' })
-  } catch (error) {
-    console.error('[api/analyze-assignment] Analysis failed', {
-      error: error instanceof Error ? error.message : String(error),
+    logVisionStatus('Vision request completed', {
+      envKeyStatus,
+      model,
+      responseId: data.id || null,
+      routeStatus: 'openai_success',
     })
 
     return response.status(200).json({
-      analysis: makeFallbackAnalysis(fileName),
-      source: 'mock',
-      ...(isDevelopment() && {
-        debug: error instanceof Error ? error.message : String(error),
+      analysis,
+      source: 'openai',
+      debug: makeDebugStatus({
+        envKeyStatus,
+        model,
+        routeStatus: 'openai_success',
+      }),
+    })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
+    console.error('[api/analyze-assignment] Analysis failed', {
+      envKeyStatus,
+      error: errorMessage,
+      fallbackReason: 'openai_request_failed',
+      model,
+      routeStatus: 'openai_error',
+    })
+
+    return response.status(502).json({
+      error: `OpenAI Vision-anropet misslyckades: ${errorMessage}`,
+      debug: makeDebugStatus({
+        envKeyStatus,
+        fallbackReason: 'openai_request_failed',
+        model,
+        openaiError: errorMessage,
+        routeStatus: 'openai_error',
       }),
     })
   }
