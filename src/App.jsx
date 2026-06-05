@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
+import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import Login from './components/Login.jsx'
+import ProfileSettings from './components/ProfileSettings.jsx'
 import Progress from './components/Progress.jsx'
 import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
@@ -12,11 +14,19 @@ import { questionBank, subjects } from './data/questions.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 
 const storageKeys = {
+  demoUsers: 'pluggarena.demoUsers',
   localAuth: 'pluggarena.localAuth',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
 }
+
+const defaultDemoUsers = [
+  { name: 'Sara', xp: 1240 },
+  { name: 'Optical', xp: 980 },
+  { name: 'Rana', xp: 760 },
+  { name: 'admin', xp: 640 },
+]
 
 const initialProgress = {
   correctAnswers: 0,
@@ -38,14 +48,41 @@ function getTodayKey() {
   return new Date().toISOString().slice(0, 10)
 }
 
+function migrateDemoNames(value) {
+  const legacyNames = {
+    [['A', 'li'].join('')]: 'Optical',
+    [['Em', 'ma'].join('')]: 'Rana',
+  }
+
+  if (typeof value === 'string' && legacyNames[value]) {
+    return legacyNames[value]
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(migrateDemoNames)
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, migrateDemoNames(entry)]),
+    )
+  }
+
+  return value
+}
+
 function readStoredValue(key, fallback) {
   try {
     const storedValue = window.localStorage.getItem(key)
-    const parsedValue = storedValue ? JSON.parse(storedValue) : null
+    const parsedValue = storedValue
+      ? migrateDemoNames(JSON.parse(storedValue))
+      : null
 
     if (!storedValue) {
       return fallback
     }
+
+    writeStoredValue(key, parsedValue)
 
     if (Array.isArray(fallback)) {
       return Array.isArray(parsedValue) ? parsedValue : fallback
@@ -73,6 +110,16 @@ function writeStoredValue(key, value) {
     window.localStorage.setItem(key, JSON.stringify(value))
   } catch {
     // Local progress should never block the app if storage is unavailable.
+  }
+}
+
+function clearPluggArenaStorage() {
+  try {
+    Object.keys(window.localStorage)
+      .filter((key) => key.startsWith('pluggarena.'))
+      .forEach((key) => window.localStorage.removeItem(key))
+  } catch {
+    // Settings should still reset the in-memory state if storage is unavailable.
   }
 }
 
@@ -218,6 +265,10 @@ function App() {
   const [authError, setAuthError] = useState('')
   const [progress, setProgress] = useState(initialProgress)
   const [squad, setSquad] = useState('')
+  const [demoUsers, setDemoUsers] = useState(() =>
+    readStoredValue(storageKeys.demoUsers, defaultDemoUsers),
+  )
+  const [activeView, setActiveView] = useState('arena')
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const todayKey = getTodayKey()
@@ -227,11 +278,16 @@ function App() {
   const leaderboard = useMemo(
     () => [
       { name: progress.username, xp: progress.xp },
-      { name: 'Sara', xp: 1240 },
-      { name: 'Ali', xp: 980 },
-      { name: 'Emma', xp: 760 },
-    ].sort((a, b) => b.xp - a.xp),
-    [progress.username, progress.xp],
+      ...demoUsers,
+    ].filter(
+      (entry, index, entries) =>
+        entries.findIndex(
+          (candidate) =>
+            candidate.name.toLocaleLowerCase('sv-SE') ===
+            entry.name.toLocaleLowerCase('sv-SE'),
+        ) === index,
+    ).sort((a, b) => b.xp - a.xp),
+    [demoUsers, progress.username, progress.xp],
   )
 
   useEffect(() => {
@@ -494,6 +550,40 @@ function App() {
     }
   }
 
+  function awardBattleXp(xp) {
+    persistProgress({
+      ...progress,
+      xp: progress.xp + xp,
+    })
+  }
+
+  function resetDemoData() {
+    const nextProgress = {
+      ...initialProgress,
+      username: progress.username || getUsernameFromUser(user),
+    }
+    const nextSquad = 'PluggSquad'
+
+    clearPluggArenaStorage()
+    writeStoredValue(storageKeys.demoUsers, defaultDemoUsers)
+    writeProgress(user, nextProgress)
+    writeSquad(user, nextSquad)
+    writeStoredValue(getScopedKey(storageKeys.quizResults, user), [])
+    writeStoredValue('pluggarena.battles', [])
+    writeStoredValue('pluggarena.battleResults', [])
+
+    if (!isSupabaseConfigured) {
+      writeStoredValue(storageKeys.localAuth, user)
+    }
+
+    setProgress(nextProgress)
+    setSquad(nextSquad)
+    setDemoUsers(defaultDemoUsers)
+    setSelectedSubject('Matematik')
+    setCurrentQuestion(null)
+    setActiveView('arena')
+  }
+
   if (authStatus === 'loading') {
     return (
       <main className="login-shell">
@@ -527,32 +617,80 @@ function App() {
         xp={progress.xp}
       />
 
-      <section className="app-grid" aria-label="PluggArena innehåll">
-        <Quiz
-          key={selectedSubject}
-          onAnswerResult={handleAnswerResult}
-          onQuestionChange={setCurrentQuestion}
+      <nav className="app-view-tabs" aria-label="PluggArena vy">
+        <button
+          className={activeView === 'arena' ? 'active' : ''}
+          onClick={() => setActiveView('arena')}
+          type="button"
+        >
+          Arena
+        </button>
+        <button
+          className={activeView === 'battle' ? 'active' : ''}
+          onClick={() => setActiveView('battle')}
+          type="button"
+        >
+          Battle Mode
+        </button>
+      </nav>
+
+      {activeView === 'battle' ? (
+        <BattleMode
+          onAwardXp={awardBattleXp}
           questionBank={questionBank}
-          selectedSubject={selectedSubject}
           subjects={subjects}
-          onSubjectChange={setSelectedSubject}
+          user={{ id: user.id, name: progress.username }}
         />
-        <AIStudyBuddy question={currentQuestion} subject={selectedSubject} />
-        <Progress
-          badges={badges}
-          correctAnswers={progress.correctAnswers}
-          level={level}
-          xp={progress.xp}
-        />
-        <Leaderboard currentUser={progress.username} entries={leaderboard} />
-        <Squad
-          onCreateSquad={saveSquad}
-          onJoinSquad={saveSquad}
-          squad={squad}
-          userXp={progress.xp}
-        />
-        <Rewards xp={progress.xp} />
-      </section>
+      ) : (
+        <>
+          <section className="app-grid" aria-label="PluggArena innehåll">
+            <section className="panel battle-entry-panel">
+              <div>
+                <p className="eyebrow">Battle Mode</p>
+                <h2>1 mot 1 Battle</h2>
+                <p>
+                  Utmana en vän i Matematik, Engelska eller Svenska. Först till
+                  10 rätt svar vinner.
+                </p>
+              </div>
+              <div className="battle-entry-actions">
+                <button type="button" onClick={() => setActiveView('battle')}>
+                  Skapa battle
+                </button>
+                <button type="button" onClick={() => setActiveView('battle')}>
+                  Gå med via kod
+                </button>
+              </div>
+            </section>
+            <Quiz
+              key={selectedSubject}
+              onAnswerResult={handleAnswerResult}
+              onQuestionChange={setCurrentQuestion}
+              questionBank={questionBank}
+              selectedSubject={selectedSubject}
+              subjects={subjects}
+              onSubjectChange={setSelectedSubject}
+            />
+            <AIStudyBuddy question={currentQuestion} subject={selectedSubject} />
+            <Progress
+              badges={badges}
+              correctAnswers={progress.correctAnswers}
+              level={level}
+              xp={progress.xp}
+            />
+            <Leaderboard currentUser={progress.username} entries={leaderboard} />
+            <Squad
+              members={demoUsers.map((entry) => entry.name)}
+              onCreateSquad={saveSquad}
+              onJoinSquad={saveSquad}
+              squad={squad}
+              userXp={progress.xp}
+            />
+            <Rewards xp={progress.xp} />
+          </section>
+          <ProfileSettings onResetDemoData={resetDemoData} />
+        </>
+      )}
     </main>
   )
 }

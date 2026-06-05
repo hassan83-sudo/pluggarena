@@ -230,6 +230,63 @@
   gap: 16px;
 }
 
+.app-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 180px));
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.app-view-tabs button {
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.app-view-tabs .active {
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.battle-entry-panel {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  border-color: rgba(141, 228, 255, 0.28);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.13), rgba(255, 92, 168, 0.1)),
+    rgba(13, 18, 34, 0.9);
+}
+
+.battle-entry-panel h2 {
+  font-size: 28px;
+}
+
+.battle-entry-panel p:last-child {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: #b7c4dd;
+  line-height: 1.5;
+}
+
+.battle-entry-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.battle-entry-actions button {
+  padding: 0 18px;
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.battle-entry-actions button:last-child {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .quiz-panel {
   grid-column: span 4;
 }
@@ -243,6 +300,12 @@
 
 .squad-panel {
   grid-column: span 3;
+}
+
+.profile-settings-panel {
+  width: 100%;
+  margin-top: 16px;
+  border-color: rgba(255, 209, 102, 0.3);
 }
 
 .panel-heading {
@@ -572,6 +635,347 @@ summary {
   font-weight: 900;
 }
 
+.profile-settings-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.profile-settings-content strong {
+  color: #ffffff;
+}
+
+.profile-settings-content p {
+  margin: 5px 0 0;
+  color: #aeb9d1;
+  line-height: 1.45;
+}
+
+.profile-settings-content button {
+  padding: 0 16px;
+  color: #ffffff;
+  background: #d9485f;
+}
+
+.settings-confirmation {
+  margin: 12px 0 0;
+  color: #6ee7b7;
+  font-weight: 900;
+}
+
+.battle-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.battle-lobby-panel,
+.battle-game-panel {
+  min-height: 470px;
+}
+
+.battle-subjects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.battle-subjects button {
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.battle-subjects .active {
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.battle-lobby-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.battle-lobby-actions article,
+.battle-lobby-actions form {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 240px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.battle-lobby-actions span,
+.battle-muted,
+.battle-history-list span,
+.battle-question-meta,
+.battle-waiting p {
+  color: #91a0ba;
+}
+
+.battle-lobby-actions strong {
+  color: #ffffff;
+  font-size: 22px;
+}
+
+.battle-lobby-actions p {
+  min-height: 48px;
+  margin: 0;
+  color: #aeb9d1;
+  line-height: 1.5;
+}
+
+.battle-lobby-actions label {
+  display: grid;
+  gap: 6px;
+}
+
+.battle-lobby-actions input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0 13px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.battle-lobby-actions button,
+.battle-complete button {
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.battle-lobby-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.battle-exit-button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 14px;
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.battle-scoreboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.battle-scoreboard article {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.battle-scoreboard article.current-player {
+  border-color: rgba(141, 228, 255, 0.4);
+}
+
+.battle-scoreboard article > span {
+  overflow: hidden;
+  color: #aeb9d1;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-scoreboard strong {
+  color: #ffffff;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.battle-versus {
+  color: #ffd166;
+  font-size: 14px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.battle-score-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.battle-score-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #2dd4bf;
+  transition: width 220ms ease;
+}
+
+.battle-score-track.opponent span {
+  background: #ff5ca8;
+}
+
+.battle-waiting,
+.battle-complete {
+  display: grid;
+  place-items: center;
+  min-height: 250px;
+  padding: 24px;
+  text-align: center;
+}
+
+.battle-waiting span {
+  color: #91a0ba;
+  font-weight: 800;
+}
+
+.battle-waiting strong {
+  margin: 8px 0;
+  color: #ffffff;
+  font-size: 44px;
+  letter-spacing: 0.12em;
+}
+
+.battle-waiting p {
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.battle-question {
+  display: grid;
+  gap: 16px;
+}
+
+.battle-question-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.battle-question h3 {
+  min-height: 66px;
+}
+
+.battle-complete {
+  gap: 12px;
+}
+
+.battle-complete > strong {
+  color: #ffffff;
+  font-size: 38px;
+}
+
+.battle-complete p {
+  margin: 0;
+  color: #aeb9d1;
+}
+
+.battle-complete button {
+  padding: 0 18px;
+}
+
+.battle-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.battle-stats-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.battle-stats-grid span {
+  color: #91a0ba;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.battle-stats-grid strong {
+  color: #ffffff;
+  font-size: 22px;
+}
+
+.battle-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.battle-history-list > article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.battle-history-list article > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.battle-history-list strong {
+  overflow: hidden;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-result {
+  text-align: right;
+}
+
+.battle-result.win strong {
+  color: #6ee7b7;
+}
+
+.battle-result.loss strong {
+  color: #ff8fab;
+}
+
+.battle-result.draw strong {
+  color: #ffd166;
+}
+
+.battle-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #ffb4c2;
+  background: rgba(255, 77, 109, 0.12);
+  font-weight: 800;
+}
+
 @media (max-width: 900px) {
   .dashboard,
   .stats-grid {
@@ -589,6 +993,14 @@ summary {
   .squad-panel,
   .rewards-panel {
     grid-column: 1 / -1;
+  }
+
+  .battle-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-entry-panel {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -612,6 +1024,45 @@ summary {
   .subject-tabs,
   .progress-grid {
     grid-template-columns: 1fr;
+  }
+
+  .app-view-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .battle-entry-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-settings-content {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-subjects,
+  .battle-lobby-actions,
+  .battle-scoreboard {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-versus {
+    min-height: 24px;
+  }
+
+  .battle-lobby-actions article,
+  .battle-lobby-actions form {
+    min-height: auto;
+  }
+
+  .battle-scoreboard article {
+    min-height: 112px;
+  }
+
+  .battle-waiting strong {
+    font-size: 34px;
+  }
+
+  .battle-question h3 {
+    min-height: auto;
   }
 
   .panel h3 {
