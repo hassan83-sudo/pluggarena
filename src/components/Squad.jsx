@@ -1,4 +1,12 @@
-function Squad({ squad, onCreateSquad, onJoinSquad, userXp }) {
+const defaultMembers = ['Sara', 'Optical', 'Rana', 'admin']
+
+function Squad({
+  members = defaultMembers,
+  squad,
+  onCreateSquad,
+  onJoinSquad,
+  userXp,
+}) {
   const squadScore = userXp + 1480
 
   return (
@@ -16,8 +24,9 @@ function Squad({ squad, onCreateSquad, onJoinSquad, userXp }) {
           <p>Lagpoäng: {squadScore} XP</p>
           <div className="squad-members">
             <span>Du</span>
-            <span>Sara</span>
-            <span>Ali</span>
+            {members.map((member) => (
+              <span key={member}>{member}</span>
+            ))}
           </div>
         </div>
       ) : (
