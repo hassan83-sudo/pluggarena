@@ -31,29 +31,41 @@ function Dashboard({
       </div>
 
       {showStats && (
-        <div className="stats-grid" aria-label="Din progression">
-          <article className="stat-card primary-stat">
-            <span>XP</span>
-            <strong>{xp}</strong>
-            <small>{level === 'Genius' ? 'Maxnivå just nu' : `${progress}% till nästa nivå`}</small>
+        <article className="stat-card arena-status-card" aria-label="Din status">
+          <div className="arena-status-values">
+            <div>
+              <span>XP</span>
+              <strong>{xp}</strong>
+            </div>
+            <div>
+              <span>Nivå</span>
+              <strong>{level}</strong>
+            </div>
+            <div>
+              <span>Streak</span>
+              <strong>{streak} dagar</strong>
+            </div>
+          </div>
+
+          <div className="arena-status-progress">
+            <div>
+              <span>Progress till nästa nivå</span>
+              <small>
+                {level === 'Genius' ? 'Maxnivå' : `${progress}%`}
+              </small>
+            </div>
             <div className="progress-track">
               <span style={{ width: `${progress}%` }} />
             </div>
-          </article>
-          <article className="stat-card">
-            <span>Level</span>
-            <strong>{level}</strong>
-            <small>Rookie 0-499 · Smart 500-999 · Genius 1000+</small>
-          </article>
-          <article className="stat-card streak-card">
-            <span>Daily Streak</span>
-            <strong>{streak} dagar</strong>
-            <small>i rad</small>
+          </div>
+
+          <div className="arena-status-action">
+            <small>Daglig bonus</small>
             <button type="button" onClick={onClaimDailyReward} disabled={hasClaimedToday}>
               {hasClaimedToday ? 'Bonus hämtad' : 'Hämta +50 XP'}
             </button>
-          </article>
-        </div>
+          </div>
+        </article>
       )}
     </header>
   )

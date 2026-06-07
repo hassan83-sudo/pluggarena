@@ -63,7 +63,6 @@
 }
 
 .login-form button,
-.streak-card button,
 .squad-actions button,
 .ghost-button {
   color: #ffffff;
@@ -166,12 +165,6 @@
   line-height: 1.55;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
 .stat-card,
 .panel {
   padding: 18px;
@@ -180,23 +173,76 @@
 .stat-card {
   display: grid;
   gap: 9px;
-  min-height: 146px;
+  min-height: 0;
 }
 
-.primary-stat {
-  grid-column: span 2;
+.arena-status-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px 18px;
+  align-content: center;
+  padding: 18px;
   background:
     linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(142, 84, 255, 0.22)),
     rgba(16, 21, 43, 0.92);
 }
 
-.streak-card {
-  background:
-    linear-gradient(135deg, rgba(255, 185, 80, 0.18), rgba(255, 83, 143, 0.14)),
-    rgba(16, 21, 43, 0.92);
+.arena-status-values {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
 }
 
-.streak-card button:disabled {
+.arena-status-values > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding-right: 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.arena-status-values > div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.arena-status-values strong {
+  overflow-wrap: anywhere;
+  font-size: 25px;
+}
+
+.arena-status-progress {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.arena-status-progress > div:first-child,
+.arena-status-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.arena-status-progress small {
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.arena-status-action {
+  align-self: end;
+}
+
+.arena-status-action button {
+  min-height: 36px;
+  padding: 0 12px;
+  white-space: nowrap;
+  color: #ffffff;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+}
+
+.arena-status-action button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -1445,13 +1491,8 @@ summary {
 }
 
 @media (max-width: 900px) {
-  .dashboard,
-  .stats-grid {
+  .dashboard {
     grid-template-columns: 1fr;
-  }
-
-  .primary-stat {
-    grid-column: auto;
   }
 
   .quiz-panel,
@@ -1551,8 +1592,27 @@ summary {
     grid-template-columns: 1fr;
   }
 
-  .stat-card {
-    min-height: 118px;
+  .arena-status-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 13px;
+  }
+
+  .arena-status-values strong {
+    font-size: 21px;
+  }
+
+  .arena-status-progress,
+  .arena-status-action {
+    grid-column: 1;
+  }
+
+  .arena-status-action {
+    align-items: center;
+  }
+
+  .arena-status-action button {
+    min-height: 34px;
   }
 
   .answer-grid {
