@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import AIStudyBuddy from './components/AIStudyBuddy.jsx'
+import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
@@ -275,6 +277,7 @@ function App() {
     readStoredValue(storageKeys.demoUsers, defaultDemoUsers),
   )
   const [activeView, setActiveView] = useState('arena')
+  const [aiTarget, setAiTarget] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const todayKey = getTodayKey()
   const level = getLevel(progress.xp)
@@ -402,6 +405,27 @@ function App() {
       authListener.subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    if (activeView !== 'assignments' || !aiTarget) {
+      return undefined
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(aiTarget)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+      setAiTarget('')
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [activeView, aiTarget])
+
+  function openAiArea(target) {
+    setActiveView('assignments')
+    setAiTarget(target)
+  }
 
   function persistProgress(nextProgress, nextSquad = squad) {
     setProgress(nextProgress)
@@ -641,6 +665,12 @@ function App() {
         </nav>
       </Dashboard>
 
+      <AIStudyBuddyHub
+        onAsk={() => openAiArea('ai-study-buddy')}
+        onContinue={() => openAiArea('ai-study-buddy')}
+        onUpload={() => openAiArea('assignment-upload')}
+      />
+
       <section className="tab-content" aria-live="polite">
         {activeView === 'arena' && (
           <div className="tab-view arena-view" id="arena-panel" role="tabpanel">
@@ -661,13 +691,21 @@ function App() {
           </div>
         )}
 
-        {activeView === 'assignments' && (
-          <div className="tab-view assignments-view" id="assignments-panel" role="tabpanel">
+        <div
+          className="tab-view assignments-view"
+          hidden={activeView !== 'assignments'}
+          id="assignments-panel"
+          role="tabpanel"
+        >
+          <AIStudyBuddy standalone />
+          <div className="assignment-section-heading">
+            <p className="eyebrow">Uppgiftsverktyg</p>
+            <h2>Ladda upp och analysera en uppgift</h2>
+          </div>
             <AssignmentUpload
               user={{ id: user.id, name: progress.username }}
             />
-          </div>
-        )}
+        </div>
 
         {activeView === 'battle' && (
           <div className="tab-view battle-view" id="battle-panel" role="tabpanel">

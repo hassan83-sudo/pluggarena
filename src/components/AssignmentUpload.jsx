@@ -286,7 +286,7 @@ function AssignmentUpload({ user }) {
   }
 
   return (
-    <section className="assignment-layout">
+    <section className="assignment-layout" id="assignment-upload">
       <section className="panel assignment-upload-panel">
         <div className="panel-heading">
           <div>

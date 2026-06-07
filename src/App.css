@@ -262,6 +262,10 @@
   min-height: 320px;
 }
 
+.tab-view[hidden] {
+  display: none;
+}
+
 .tab-view {
   width: 100%;
 }
@@ -298,6 +302,87 @@
 
 .utility-sections .profile-settings-panel {
   margin-top: 0;
+}
+
+.ai-hub-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 12px;
+  border-color: rgba(141, 228, 255, 0.3);
+}
+
+.ai-hub-copy {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.ai-hub-copy h2,
+.assignment-section-heading h2 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.ai-hub-copy p:last-child {
+  margin: 6px 0 0;
+  color: #aeb9d1;
+}
+
+.ai-hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ai-hub-actions button {
+  min-height: 38px;
+  padding: 0 13px;
+  color: #07111f;
+  background: #8de4ff;
+}
+
+.ai-hub-actions button:nth-child(2),
+.ai-hub-actions button:nth-child(3) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.buddy-main-panel {
+  margin-bottom: 12px;
+  border-color: rgba(141, 228, 255, 0.3);
+}
+
+.buddy-question-field {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: #dce6f8;
+  font-weight: 800;
+}
+
+.buddy-question-field textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 12px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  line-height: 1.5;
+}
+
+.assignment-section-heading {
+  margin: 18px 0 12px;
+}
+
+#ai-study-buddy,
+#assignment-upload {
+  scroll-margin-top: 12px;
 }
 
 .battle-entry-panel {
@@ -1393,6 +1478,14 @@ summary {
   .utility-sections {
     grid-template-columns: 1fr;
   }
+
+  .ai-hub-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-hub-actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1442,6 +1535,20 @@ summary {
     flex: 0 0 auto;
     min-height: 34px;
     padding: 0 11px;
+  }
+
+  .ai-hub-copy {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .ai-hub-copy .buddy-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .ai-hub-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .stat-card {

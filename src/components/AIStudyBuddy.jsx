@@ -8,7 +8,8 @@ function makeFallbackHint(question, subject) {
   return `Titta på nyckelorden i ${subject} och uteslut svar som inte passar. Försök hitta metoden innan du väljer alternativ.`
 }
 
-function AIStudyBuddy({ question, subject }) {
+function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) {
+  const [prompt, setPrompt] = useState('')
   const [hint, setHint] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
@@ -16,9 +17,13 @@ function AIStudyBuddy({ question, subject }) {
 
   async function requestHint() {
     setError('')
+    const activeQuestion = standalone
+      ? { answer: '', options: [], question: prompt.trim() }
+      : question
 
-    if (!question) {
-      setHint(makeFallbackHint(question, subject))
+    if (!activeQuestion?.question) {
+      setError(standalone ? 'Skriv en fråga först.' : '')
+      setHint(standalone ? '' : makeFallbackHint(question, subject))
       return
     }
 
@@ -30,9 +35,9 @@ function AIStudyBuddy({ question, subject }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          answer: question.answer,
-          options: question.options,
-          question: question.question,
+          answer: activeQuestion.answer,
+          options: activeQuestion.options,
+          question: activeQuestion.question,
           subject,
         }),
       })
@@ -53,7 +58,7 @@ function AIStudyBuddy({ question, subject }) {
       throw new Error('Study Buddy API returned no hint')
     } catch (requestError) {
       setError('Kunde inte nå AI just nu. Visar fallback-hint.')
-      setHint(makeFallbackHint(question, subject))
+      setHint(makeFallbackHint(activeQuestion, subject))
       setStatus(
         requestError instanceof Error
           ? requestError.message
@@ -65,7 +70,7 @@ function AIStudyBuddy({ question, subject }) {
   }
 
   return (
-    <section className="panel buddy-panel">
+    <section className={`panel buddy-panel ${standalone ? 'buddy-main-panel' : ''}`} id="ai-study-buddy">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">AI Coach</p>
@@ -78,12 +83,26 @@ function AIStudyBuddy({ question, subject }) {
         <div>
           <strong>Behöver du en knuff?</strong>
           <p>
-            {question
+            {standalone
+              ? 'Beskriv vad du fastnat på. Du får en kort ledtråd som hjälper dig vidare utan att avslöja hela svaret.'
+              : question
               ? `Få en kort pedagogisk hint i ${subject}.`
               : 'Starta quizet igen så kan Study Buddy hjälpa dig med nästa fråga.'}
           </p>
         </div>
       </div>
+
+      {standalone && (
+        <label className="buddy-question-field">
+          <span>Din fråga</span>
+          <textarea
+            onChange={(event) => setPrompt(event.target.value)}
+            placeholder="Till exempel: Hur börjar jag lösa den här ekvationen?"
+            rows="4"
+            value={prompt}
+          />
+        </label>
+      )}
 
       <button
         className="hint-button"
@@ -91,7 +110,7 @@ function AIStudyBuddy({ question, subject }) {
         onClick={requestHint}
         disabled={isLoading}
       >
-        {isLoading ? 'Hämtar hint...' : 'Få en hint'}
+        {isLoading ? 'AI Study Buddy tänker...' : standalone ? 'Fråga AI' : 'Få en hint'}
       </button>
 
       {(hint || error || status) && (
