@@ -70,7 +70,7 @@ function AssignmentPreview({ assignment, previewUrl }) {
   )
 }
 
-function AssignmentUpload({ onAssignmentsChange, user }) {
+function AssignmentUpload({ humorMode = false, onAssignmentsChange, user }) {
   const [file, setFile] = useState(null)
   const [fileData, setFileData] = useState('')
   const [title, setTitle] = useState('')
@@ -226,6 +226,7 @@ function AssignmentUpload({ onAssignmentsChange, user }) {
           fileName: selectedAssignment.fileName,
           fileType: selectedAssignment.fileType,
           fileUrl: inlineFileData ? '' : currentPreviewUrl,
+          humorMode,
         }),
       })
       const data = await response.json().catch(() => ({}))
@@ -393,6 +394,7 @@ function AssignmentUpload({ onAssignmentsChange, user }) {
             <p className="eyebrow">AI Study Buddy</p>
             <h2>Stegvisa ledtrådar</h2>
           </div>
+          {humorMode && <span className="humor-mode-badge">Humorläge på</span>}
         </div>
 
         {analysis ? (

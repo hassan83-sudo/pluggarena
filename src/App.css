@@ -380,9 +380,45 @@
 
 .ai-hub-header {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
+  grid-template-columns: 54px minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
+}
+
+.humor-mode-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  color: #b7c4dd;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.humor-mode-control button {
+  min-width: 46px;
+  min-height: 34px;
+  padding: 0 10px;
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.humor-mode-control button.active {
+  color: #07111f;
+  background: #ffd166;
+}
+
+.humor-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: #07111f;
+  background: #ffd166;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .ai-hub-header h2,
@@ -1629,6 +1665,12 @@ summary {
   .ai-hub-header .buddy-avatar {
     width: 44px;
     height: 44px;
+  }
+
+  .humor-mode-control {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .ai-hub-summary {

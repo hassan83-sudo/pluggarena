@@ -1,14 +1,19 @@
 import { useState } from 'react'
 
-function makeFallbackHint(question, subject) {
+function makeFallbackHint(question, subject, humorMode) {
   if (!question) {
     return 'Välj en fråga först, så kan jag ge en kort hint.'
   }
 
-  return `Titta på nyckelorden i ${subject} och uteslut svar som inte passar. Försök hitta metoden innan du väljer alternativ.`
+  return `Titta på nyckelorden i ${subject} och uteslut svar som inte passar. Försök hitta metoden innan du väljer alternativ.${humorMode ? ' Hjärnan är uppvärmd, pennan får hänga med!' : ''}`
 }
 
-function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) {
+function AIStudyBuddy({
+  humorMode = false,
+  question,
+  standalone = false,
+  subject = 'Skolarbete',
+}) {
   const [prompt, setPrompt] = useState('')
   const [hint, setHint] = useState('')
   const [status, setStatus] = useState('')
@@ -23,7 +28,7 @@ function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) 
 
     if (!activeQuestion?.question) {
       setError(standalone ? 'Skriv en fråga först.' : '')
-      setHint(standalone ? '' : makeFallbackHint(question, subject))
+      setHint(standalone ? '' : makeFallbackHint(question, subject, humorMode))
       return
     }
 
@@ -36,6 +41,7 @@ function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           answer: activeQuestion.answer,
+          humorMode,
           options: activeQuestion.options,
           question: activeQuestion.question,
           subject,
@@ -58,7 +64,7 @@ function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) 
       throw new Error('Study Buddy API returned no hint')
     } catch (requestError) {
       setError('Kunde inte nå AI just nu. Visar fallback-hint.')
-      setHint(makeFallbackHint(activeQuestion, subject))
+      setHint(makeFallbackHint(activeQuestion, subject, humorMode))
       setStatus(
         requestError instanceof Error
           ? requestError.message
@@ -76,6 +82,7 @@ function AIStudyBuddy({ question, standalone = false, subject = 'Skolarbete' }) 
           <p className="eyebrow">AI Coach</p>
           <h2>AI Study Buddy</h2>
         </div>
+        {humorMode && <span className="humor-mode-badge">Humorläge på</span>}
       </div>
 
       <div className="buddy-card">

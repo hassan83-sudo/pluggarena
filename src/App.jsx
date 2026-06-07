@@ -17,6 +17,7 @@ import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 const storageKeys = {
   demoUsers: 'pluggarena.demoUsers',
   localAuth: 'pluggarena.localAuth',
+  humorMode: 'pluggarena.humorMode',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -281,6 +282,9 @@ function App() {
   )
   const [activeView, setActiveView] = useState('arena')
   const [aiTarget, setAiTarget] = useState('')
+  const [humorMode, setHumorMode] = useState(() =>
+    readStoredValue(storageKeys.humorMode, false),
+  )
   const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
@@ -462,6 +466,14 @@ function App() {
   function openAiArea(target) {
     setActiveView('assignments')
     setAiTarget(target)
+  }
+
+  function toggleHumorMode() {
+    setHumorMode((current) => {
+      const nextValue = !current
+      writeStoredValue(storageKeys.humorMode, nextValue)
+      return nextValue
+    })
   }
 
   function persistProgress(nextProgress, nextSquad = squad) {
@@ -649,6 +661,8 @@ function App() {
     setActiveView('arena')
     setAssignmentsWaiting(0)
     setQuizCompletedToday(0)
+    setHumorMode(false)
+    writeStoredValue(storageKeys.humorMode, false)
   }
 
   if (authStatus === 'loading') {
@@ -707,10 +721,12 @@ function App() {
 
       <AIStudyBuddyHub
         assignmentsWaiting={assignmentsWaiting}
+        humorMode={humorMode}
         nextLevelXp={nextLevelXp}
         onContinue={() => openAiArea('ai-study-buddy')}
         onCreateQuiz={() => setActiveView('quiz')}
         onExplain={() => openAiArea('ai-study-buddy')}
+        onToggleHumor={toggleHumorMode}
         onUpload={() => openAiArea('assignment-upload')}
         quizRemaining={quizRemaining}
         rewardXpRemaining={rewardXpRemaining}
@@ -743,12 +759,13 @@ function App() {
           id="assignments-panel"
           role="tabpanel"
         >
-          <AIStudyBuddy standalone />
+          <AIStudyBuddy humorMode={humorMode} standalone />
           <div className="assignment-section-heading">
             <p className="eyebrow">Uppgiftsverktyg</p>
             <h2>Ladda upp och analysera en uppgift</h2>
           </div>
             <AssignmentUpload
+              humorMode={humorMode}
               onAssignmentsChange={handleAssignmentsChange}
               user={{ id: user.id, name: progress.username }}
             />

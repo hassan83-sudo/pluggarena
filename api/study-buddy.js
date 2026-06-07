@@ -21,12 +21,12 @@ function sanitizeOptions(value) {
   return value.map((option) => sanitizeText(option)).filter(Boolean).slice(0, 4)
 }
 
-function makeFallbackHint(question, subject) {
+function makeFallbackHint(question, subject, humorMode = false) {
   if (!question) {
     return 'Välj en fråga först, så kan jag ge en kort hint.'
   }
 
-  return `Titta på nyckelorden i ${subject || 'ämnet'} och försök utesluta två svar som känns minst rimliga. Fokusera på metoden, inte på att gissa direkt.`
+  return `Titta på nyckelorden i ${subject || 'ämnet'} och försök utesluta två svar som känns minst rimliga. Fokusera på metoden, inte på att gissa direkt.${humorMode ? ' Hjärnan gör jobbet, pennan tar äran!' : ''}`
 }
 
 function extractResponseText(data) {
@@ -50,14 +50,20 @@ function parseRequestBody(request) {
   return request.body ?? {}
 }
 
-function fallbackPayload(question, subject, reason, details = {}) {
+function fallbackPayload(
+  question,
+  subject,
+  reason,
+  details = {},
+  humorMode = false,
+) {
   const message =
     reason === 'missing_openai_api_key'
       ? 'OPENAI_API_KEY saknas på servern. Fyll i .env.local eller hostingens miljövariabler för riktiga AI-hints.'
       : 'AI Study Buddy använder fallback-hint just nu.'
 
   return {
-    hint: makeFallbackHint(question, subject),
+    hint: makeFallbackHint(question, subject, humorMode),
     message,
     source: 'mock',
     fallbackReason: reason,
@@ -86,6 +92,7 @@ export default async function handler(request, response) {
   const question = sanitizeText(body.question)
   const options = sanitizeOptions(body.options)
   const answer = sanitizeText(body.answer)
+  const humorMode = body.humorMode === true
 
   if (!question) {
     return response.status(400).json({ error: 'Question is required' })
@@ -96,10 +103,13 @@ export default async function handler(request, response) {
 
   if (!hasApiKey) {
     return response.status(200).json(
-      fallbackPayload(question, subject, 'missing_openai_api_key', {
-        hasApiKey,
-        model,
-      }),
+      fallbackPayload(
+        question,
+        subject,
+        'missing_openai_api_key',
+        { hasApiKey, model },
+        humorMode,
+      ),
     )
   }
 
@@ -113,8 +123,14 @@ export default async function handler(request, response) {
       body: JSON.stringify({
         model,
         max_output_tokens: 90,
-        instructions:
-          'Du är PluggArenas AI Study Buddy. Svara alltid på svenska. Ge en kort pedagogisk hint, max 2 meningar. Hjälp eleven förstå metoden. Avslöja inte hela svaret och skriv inte "rätt svar är".',
+        instructions: [
+          'Du är PluggArenas AI Study Buddy. Svara alltid på svenska.',
+          'Ge en kort pedagogisk hint, max 2 meningar. Hjälp eleven förstå metoden.',
+          'Avslöja inte hela svaret och skriv inte "rätt svar är".',
+          humorMode
+            ? 'Humorläge är på: lägg gärna till en mycket kort, snäll och skolvänlig kommentar. Humor får aldrig ändra fakta, metod eller korrekthet och får aldrig ge ett felaktigt svar med flit.'
+            : 'Humorläge är av: håll tonen vänlig och rak utan skämt.',
+        ].join(' '),
         input: [
           {
             role: 'user',
@@ -144,10 +160,13 @@ export default async function handler(request, response) {
 
     if (!hint) {
       return response.status(200).json(
-        fallbackPayload(question, subject, 'empty_openai_response', {
-          hasApiKey,
-          model,
-        }),
+        fallbackPayload(
+          question,
+          subject,
+          'empty_openai_response',
+          { hasApiKey, model },
+          humorMode,
+        ),
       )
     }
 
@@ -168,11 +187,17 @@ export default async function handler(request, response) {
     })
 
     return response.status(200).json(
-      fallbackPayload(question, subject, 'openai_request_failed', {
-        error: error instanceof Error ? error.message : String(error),
-        hasApiKey,
-        model,
-      }),
+      fallbackPayload(
+        question,
+        subject,
+        'openai_request_failed',
+        {
+          error: error instanceof Error ? error.message : String(error),
+          hasApiKey,
+          model,
+        },
+        humorMode,
+      ),
     )
   }
 }

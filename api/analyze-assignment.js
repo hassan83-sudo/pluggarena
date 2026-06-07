@@ -175,6 +175,7 @@ export default async function handler(request, response) {
   const fileName = sanitizeText(body.fileName, 200)
   const fileType = sanitizeText(body.fileType, 100)
   const fileUrl = sanitizeText(body.fileUrl, 4000)
+  const humorMode = body.humorMode === true
   const model = getModelName()
   const hasApiKey = Boolean(process.env.OPENAI_API_KEY?.trim())
   const envKeyStatus = hasApiKey ? 'configured' : 'missing'
@@ -251,6 +252,9 @@ export default async function handler(request, response) {
             'För Engelska: ge konkret översättnings-, ordförråds- och grammatikhjälp utifrån den synliga engelska texten.',
             'Om något är oläsligt, säg exakt vad som är osäkert i visibleContent. Hitta inte på text eller tal.',
             'Ledtrådarna ska gå från försiktig knuff till tydligare metodstöd, men aldrig avslöja hela svaret direkt.',
+            humorMode
+              ? 'Humorläge är på: ledtrådarna får innehålla korta, snälla och skolvänliga kommentarer. Skämten får aldrig ändra fakta, tal, metod eller korrekthet och du får aldrig ge fel svar med flit.'
+              : 'Humorläge är av: håll tonen vänlig och tydlig utan skämt.',
           ].join(' '),
         input: [
           {

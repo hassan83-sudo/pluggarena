@@ -1,9 +1,11 @@
 function AIStudyBuddyHub({
   assignmentsWaiting,
+  humorMode,
   nextLevelXp,
   onContinue,
   onCreateQuiz,
   onExplain,
+  onToggleHumor,
   onUpload,
   quizRemaining,
   rewardXpRemaining,
@@ -17,6 +19,18 @@ function AIStudyBuddyHub({
           <p className="eyebrow">AI Study Buddy</p>
           <h2>Hej {username} 👋</h2>
           <p>Här är din personliga studieöversikt.</p>
+        </div>
+        <div className="humor-mode-control">
+          {humorMode && <span className="humor-mode-badge">Humorläge på</span>}
+          <span>Humorläge</span>
+          <button
+            aria-pressed={humorMode}
+            className={humorMode ? 'active' : ''}
+            onClick={onToggleHumor}
+            type="button"
+          >
+            {humorMode ? 'På' : 'Av'}
+          </button>
         </div>
       </div>
 
