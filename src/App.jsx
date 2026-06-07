@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
 import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
@@ -36,6 +36,9 @@ const initialProgress = {
   username: '',
   xp: 320,
 }
+
+const dailyQuizTarget = 5
+const rewardGoalXp = 5000
 
 const navigationItems = [
   { id: 'arena', label: 'Arena' },
@@ -278,10 +281,16 @@ function App() {
   )
   const [activeView, setActiveView] = useState('arena')
   const [aiTarget, setAiTarget] = useState('')
+  const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
+  const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const todayKey = getTodayKey()
   const level = getLevel(progress.xp)
   const hasClaimedToday = progress.lastRewardDate === todayKey
+  const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : progress.xp
+  const nextLevelXp = Math.max(nextLevelTarget - progress.xp, 0)
+  const quizRemaining = Math.max(dailyQuizTarget - quizCompletedToday, 0)
+  const rewardXpRemaining = Math.max(rewardGoalXp - progress.xp, 0)
   const leaderboard = useMemo(
     () => [
       { name: progress.username, xp: progress.xp },
@@ -407,6 +416,34 @@ function App() {
   }, [])
 
   useEffect(() => {
+    let isCancelled = false
+
+    queueMicrotask(() => {
+      if (isCancelled) {
+        return
+      }
+
+      const results = user
+        ? readStoredValue(getScopedKey(storageKeys.quizResults, user), [])
+        : []
+      setQuizCompletedToday(
+        results.filter((result) => result.createdAt?.slice(0, 10) === todayKey)
+          .length,
+      )
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [todayKey, user])
+
+  const handleAssignmentsChange = useCallback((items) => {
+    setAssignmentsWaiting(
+      items.filter((assignment) => !assignment.analysis).length,
+    )
+  }, [])
+
+  useEffect(() => {
     if (activeView !== 'assignments' || !aiTarget) {
       return undefined
     }
@@ -523,6 +560,7 @@ function App() {
     const storedResults = readStoredValue(resultsKey, [])
 
     writeStoredValue(resultsKey, [nextResult, ...storedResults].slice(0, 100))
+    setQuizCompletedToday((count) => count + 1)
 
     if (isSupabaseConfigured && user?.id) {
       saveSupabaseQuizResult(user, nextResult).catch((error) => {
@@ -609,6 +647,8 @@ function App() {
     setDemoUsers(defaultDemoUsers)
     setSelectedSubject('Matematik')
     setActiveView('arena')
+    setAssignmentsWaiting(0)
+    setQuizCompletedToday(0)
   }
 
   if (authStatus === 'loading') {
@@ -666,9 +706,15 @@ function App() {
       </Dashboard>
 
       <AIStudyBuddyHub
-        onAsk={() => openAiArea('ai-study-buddy')}
+        assignmentsWaiting={assignmentsWaiting}
+        nextLevelXp={nextLevelXp}
         onContinue={() => openAiArea('ai-study-buddy')}
+        onCreateQuiz={() => setActiveView('quiz')}
+        onExplain={() => openAiArea('ai-study-buddy')}
         onUpload={() => openAiArea('assignment-upload')}
+        quizRemaining={quizRemaining}
+        rewardXpRemaining={rewardXpRemaining}
+        username={progress.username || getUsernameFromUser(user)}
       />
 
       <section className="tab-content" aria-live="polite">
@@ -703,6 +749,7 @@ function App() {
             <h2>Ladda upp och analysera en uppgift</h2>
           </div>
             <AssignmentUpload
+              onAssignmentsChange={handleAssignmentsChange}
               user={{ id: user.id, name: progress.username }}
             />
         </div>

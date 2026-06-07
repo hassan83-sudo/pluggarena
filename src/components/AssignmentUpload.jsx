@@ -70,7 +70,7 @@ function AssignmentPreview({ assignment, previewUrl }) {
   )
 }
 
-function AssignmentUpload({ user }) {
+function AssignmentUpload({ onAssignmentsChange, user }) {
   const [file, setFile] = useState(null)
   const [fileData, setFileData] = useState('')
   const [title, setTitle] = useState('')
@@ -92,6 +92,7 @@ function AssignmentUpload({ user }) {
       .then((items) => {
         if (isMounted) {
           setAssignments(items)
+          onAssignmentsChange(items)
         }
       })
       .catch((loadError) => {
@@ -103,7 +104,7 @@ function AssignmentUpload({ user }) {
     return () => {
       isMounted = false
     }
-  }, [user.id])
+  }, [onAssignmentsChange, user.id])
 
   async function selectAssignment(assignment) {
     setError('')
@@ -180,7 +181,11 @@ function AssignmentUpload({ user }) {
         title: title.trim(),
         userId: user.id,
       })
-      setAssignments((items) => [savedAssignment, ...items])
+      setAssignments((items) => {
+        const nextItems = [savedAssignment, ...items]
+        onAssignmentsChange(nextItems)
+        return nextItems
+      })
       setSelectedAssignment(savedAssignment)
       setStatus('Uppgiften har sparats.')
     } catch (saveError) {
@@ -261,13 +266,15 @@ function AssignmentUpload({ user }) {
 
       if (selectedAssignment.id) {
         await saveAssignmentAnalysis(selectedAssignment, data.analysis)
-        setAssignments((items) =>
-          items.map((assignment) =>
+        setAssignments((items) => {
+          const nextItems = items.map((assignment) =>
             assignment.id === selectedAssignment.id
               ? { ...assignment, analysis: data.analysis }
               : assignment,
-          ),
-        )
+          )
+          onAssignmentsChange(nextItems)
+          return nextItems
+        })
       }
     } catch (analysisError) {
       setError(analysisError.message)
