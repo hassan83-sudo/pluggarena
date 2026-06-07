@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import AIStudyBuddy from './components/AIStudyBuddy.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import Login from './components/Login.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
-import Progress from './components/Progress.jsx'
 import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
@@ -38,13 +36,10 @@ const initialProgress = {
 }
 
 const navigationItems = [
-  { id: 'arena', label: 'Arena', view: 'arena' },
-  { id: 'quiz', label: 'Quiz', view: 'arena' },
-  { id: 'battle', label: 'Battle', view: 'battle' },
-  { id: 'assignments', label: 'Uppgifter', view: 'assignments' },
-  { id: 'squad', label: 'Squad', view: 'arena' },
-  { id: 'rewards', label: 'Belöningar', view: 'arena' },
-  { id: 'profile', label: 'Profil', view: 'arena' },
+  { id: 'arena', label: 'Arena' },
+  { id: 'quiz', label: 'Quiz' },
+  { id: 'battle', label: 'Battle' },
+  { id: 'assignments', label: 'Uppgifter' },
 ]
 
 function getUserKey(user) {
@@ -280,13 +275,9 @@ function App() {
     readStoredValue(storageKeys.demoUsers, defaultDemoUsers),
   )
   const [activeView, setActiveView] = useState('arena')
-  const [activeSection, setActiveSection] = useState('arena')
-  const [scrollTarget, setScrollTarget] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
-  const [currentQuestion, setCurrentQuestion] = useState(null)
   const todayKey = getTodayKey()
   const level = getLevel(progress.xp)
-  const badges = getBadges(progress)
   const hasClaimedToday = progress.lastRewardDate === todayKey
   const leaderboard = useMemo(
     () => [
@@ -411,28 +402,6 @@ function App() {
       authListener.subscription.unsubscribe()
     }
   }, [])
-
-  useEffect(() => {
-    if (!scrollTarget) {
-      return undefined
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      document.getElementById(scrollTarget)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      })
-      setScrollTarget('')
-    })
-
-    return () => window.cancelAnimationFrame(frame)
-  }, [activeView, scrollTarget])
-
-  function navigateToSection(item) {
-    setActiveView(item.view)
-    setActiveSection(item.id)
-    setScrollTarget(item.id)
-  }
 
   function persistProgress(nextProgress, nextSquad = squad) {
     setProgress(nextProgress)
@@ -615,9 +584,7 @@ function App() {
     setSquad(nextSquad)
     setDemoUsers(defaultDemoUsers)
     setSelectedSubject('Matematik')
-    setCurrentQuestion(null)
     setActiveView('arena')
-    setActiveSection('arena')
   }
 
   if (authStatus === 'loading') {
@@ -648,16 +615,24 @@ function App() {
         level={level}
         onClaimDailyReward={claimDailyReward}
         onLogout={handleLogout}
+        showStats={activeView === 'arena'}
         streak={progress.streak}
         username={progress.username}
         xp={progress.xp}
       >
-        <nav className="top-navigation" aria-label="PluggArena navigation">
+        <nav
+          className="top-navigation"
+          aria-label="PluggArena navigation"
+          role="tablist"
+        >
           {navigationItems.map((item) => (
             <button
-              className={activeSection === item.id ? 'active' : ''}
+              aria-controls={`${item.id}-panel`}
+              aria-selected={activeView === item.id}
+              className={activeView === item.id ? 'active' : ''}
               key={item.id}
-              onClick={() => navigateToSection(item)}
+              onClick={() => setActiveView(item.id)}
+              role="tab"
               type="button"
             >
               {item.label}
@@ -666,77 +641,57 @@ function App() {
         </nav>
       </Dashboard>
 
-      {activeView === 'assignments' ? (
-        <div id="assignments" className="view-anchor">
-          <AssignmentUpload
-            user={{ id: user.id, name: progress.username }}
-          />
-        </div>
-      ) : activeView === 'battle' ? (
-        <div id="battle" className="view-anchor">
-          <BattleMode
-            onAwardXp={awardBattleXp}
-            questionBank={questionBank}
-            subjects={subjects}
-            user={{ id: user.id, name: progress.username }}
-          />
-        </div>
-      ) : (
-        <section id="arena" className="arena-view">
-          <section className="app-grid" aria-label="PluggArena innehåll">
-            <section className="panel battle-entry-panel">
-              <div>
-                <p className="eyebrow">Battle Mode</p>
-                <h2>1 mot 1 Battle</h2>
-                <p>
-                  Utmana en vän i Matematik, Engelska eller Svenska. Först till
-                  10 rätt svar vinner.
-                </p>
-              </div>
-              <div className="battle-entry-actions">
-                <button
-                  type="button"
-                  onClick={() => navigateToSection(navigationItems[2])}
-                >
-                  Skapa battle
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateToSection(navigationItems[2])}
-                >
-                  Gå med via kod
-                </button>
-              </div>
-            </section>
+      <section className="tab-content" aria-live="polite">
+        {activeView === 'arena' && (
+          <div className="tab-view arena-view" id="arena-panel" role="tabpanel">
+            <Leaderboard currentUser={progress.username} entries={leaderboard} />
+          </div>
+        )}
+
+        {activeView === 'quiz' && (
+          <div className="tab-view quiz-view" id="quiz-panel" role="tabpanel">
             <Quiz
               key={selectedSubject}
               onAnswerResult={handleAnswerResult}
-              onQuestionChange={setCurrentQuestion}
               questionBank={questionBank}
               selectedSubject={selectedSubject}
               subjects={subjects}
               onSubjectChange={setSelectedSubject}
             />
-            <AIStudyBuddy question={currentQuestion} subject={selectedSubject} />
-            <Progress
-              badges={badges}
-              correctAnswers={progress.correctAnswers}
-              level={level}
-              xp={progress.xp}
+          </div>
+        )}
+
+        {activeView === 'assignments' && (
+          <div className="tab-view assignments-view" id="assignments-panel" role="tabpanel">
+            <AssignmentUpload
+              user={{ id: user.id, name: progress.username }}
             />
-            <Leaderboard currentUser={progress.username} entries={leaderboard} />
-            <Squad
-              members={demoUsers.map((entry) => entry.name)}
-              onCreateSquad={saveSquad}
-              onJoinSquad={saveSquad}
-              squad={squad}
-              userXp={progress.xp}
+          </div>
+        )}
+
+        {activeView === 'battle' && (
+          <div className="tab-view battle-view" id="battle-panel" role="tabpanel">
+            <BattleMode
+              onAwardXp={awardBattleXp}
+              questionBank={questionBank}
+              subjects={subjects}
+              user={{ id: user.id, name: progress.username }}
             />
-            <Rewards xp={progress.xp} />
-          </section>
-          <ProfileSettings onResetDemoData={resetDemoData} />
-        </section>
-      )}
+          </div>
+        )}
+      </section>
+
+      <section className="utility-sections" aria-label="Squad, belöningar och profil">
+        <Squad
+          members={demoUsers.map((entry) => entry.name)}
+          onCreateSquad={saveSquad}
+          onJoinSquad={saveSquad}
+          squad={squad}
+          userXp={progress.xp}
+        />
+        <Rewards xp={progress.xp} />
+        <ProfileSettings onResetDemoData={resetDemoData} />
+      </section>
     </main>
   )
 }

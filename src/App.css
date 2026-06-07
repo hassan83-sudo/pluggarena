@@ -99,6 +99,10 @@
   margin-bottom: 12px;
 }
 
+.dashboard-tabs-only {
+  grid-template-columns: 1fr;
+}
+
 .hero-copy,
 .panel,
 .stat-card {
@@ -254,13 +258,46 @@
   background: #8de4ff;
 }
 
-.view-anchor,
-.arena-view,
-#quiz,
-#squad,
-#rewards,
-#profile {
-  scroll-margin-top: 12px;
+.tab-content {
+  min-height: 320px;
+}
+
+.tab-view {
+  width: 100%;
+}
+
+.arena-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.arena-view .leaderboard-panel,
+.quiz-view .quiz-panel {
+  grid-column: 1 / -1;
+}
+
+.utility-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.utility-sections .panel {
+  min-width: 0;
+  padding: 14px;
+}
+
+.utility-sections .panel-heading {
+  margin-bottom: 10px;
+}
+
+.utility-sections .panel h2 {
+  font-size: 20px;
+}
+
+.utility-sections .profile-settings-panel {
+  margin-top: 0;
 }
 
 .battle-entry-panel {
@@ -1350,6 +1387,10 @@ summary {
   }
 
   .assignment-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .utility-sections {
     grid-template-columns: 1fr;
   }
 }

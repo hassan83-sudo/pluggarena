@@ -4,6 +4,7 @@ function Dashboard({
   level,
   onClaimDailyReward,
   onLogout,
+  showStats,
   streak,
   username,
   xp,
@@ -14,7 +15,7 @@ function Dashboard({
     : Math.min(Math.round((xp / nextLevelXp) * 100), 100)
 
   return (
-    <header className="dashboard">
+    <header className={showStats ? 'dashboard' : 'dashboard dashboard-tabs-only'}>
       <div className="hero-copy">
         <div className="hero-topline">
           <p className="eyebrow">PluggArena v2</p>
@@ -29,29 +30,31 @@ function Dashboard({
         {children}
       </div>
 
-      <div className="stats-grid" aria-label="Din progression">
-        <article className="stat-card primary-stat">
-          <span>XP</span>
-          <strong>{xp}</strong>
-          <small>{level === 'Genius' ? 'Maxnivå just nu' : `${progress}% till nästa nivå`}</small>
-          <div className="progress-track">
-            <span style={{ width: `${progress}%` }} />
-          </div>
-        </article>
-        <article className="stat-card">
-          <span>Level</span>
-          <strong>{level}</strong>
-          <small>Rookie 0-499 · Smart 500-999 · Genius 1000+</small>
-        </article>
-        <article className="stat-card streak-card">
-          <span>Daily Streak</span>
-          <strong>{streak} dagar</strong>
-          <small>i rad</small>
-          <button type="button" onClick={onClaimDailyReward} disabled={hasClaimedToday}>
-            {hasClaimedToday ? 'Bonus hämtad' : 'Hämta +50 XP'}
-          </button>
-        </article>
-      </div>
+      {showStats && (
+        <div className="stats-grid" aria-label="Din progression">
+          <article className="stat-card primary-stat">
+            <span>XP</span>
+            <strong>{xp}</strong>
+            <small>{level === 'Genius' ? 'Maxnivå just nu' : `${progress}% till nästa nivå`}</small>
+            <div className="progress-track">
+              <span style={{ width: `${progress}%` }} />
+            </div>
+          </article>
+          <article className="stat-card">
+            <span>Level</span>
+            <strong>{level}</strong>
+            <small>Rookie 0-499 · Smart 500-999 · Genius 1000+</small>
+          </article>
+          <article className="stat-card streak-card">
+            <span>Daily Streak</span>
+            <strong>{streak} dagar</strong>
+            <small>i rad</small>
+            <button type="button" onClick={onClaimDailyReward} disabled={hasClaimedToday}>
+              {hasClaimedToday ? 'Bonus hämtad' : 'Hämta +50 XP'}
+            </button>
+          </article>
+        </div>
+      )}
     </header>
   )
 }

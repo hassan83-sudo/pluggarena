@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 function Quiz({
   onAnswerResult,
-  onQuestionChange,
   onSubjectChange,
   questionBank,
   selectedSubject,
@@ -19,10 +18,6 @@ function Quiz({
     () => Math.round(((questionIndex + (isFinished ? 0 : 1)) / questions.length) * 100),
     [isFinished, questionIndex, questions.length],
   )
-
-  useEffect(() => {
-    onQuestionChange(isFinished ? null : currentQuestion)
-  }, [currentQuestion, isFinished, onQuestionChange])
 
   function chooseAnswer(option) {
     if (selectedAnswer || isFinished) {
