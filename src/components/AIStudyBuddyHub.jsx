@@ -1,14 +1,10 @@
 function AIStudyBuddyHub({
-  assignmentsWaiting,
   humorMode,
-  nextLevelXp,
   onContinue,
   onCreateQuiz,
   onExplain,
   onToggleHumor,
   onUpload,
-  quizRemaining,
-  rewardXpRemaining,
 }) {
   return (
     <section className="panel ai-hub-panel">
@@ -30,29 +26,6 @@ function AIStudyBuddyHub({
           >
             {humorMode ? 'På' : 'Av'}
           </button>
-        </div>
-      </div>
-
-      <div className="ai-hub-summary">
-        <div>
-          <span aria-hidden="true">📚</span>
-          <strong>{assignmentsWaiting}</strong>
-          <small>uppgifter väntar</small>
-        </div>
-        <div>
-          <span aria-hidden="true">📝</span>
-          <strong>{quizRemaining}</strong>
-          <small>quiz kvar idag</small>
-        </div>
-        <div>
-          <span aria-hidden="true">🏆</span>
-          <strong>{nextLevelXp}</strong>
-          <small>XP till nästa nivå</small>
-        </div>
-        <div>
-          <span aria-hidden="true">🎁</span>
-          <strong>{rewardXpRemaining}</strong>
-          <small>XP till Väla-presentkort</small>
         </div>
       </div>
 

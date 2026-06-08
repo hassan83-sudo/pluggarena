@@ -691,10 +691,14 @@ function App() {
   return (
     <main className="app-shell">
       <Dashboard
+        assignmentsWaiting={assignmentsWaiting}
         hasClaimedToday={hasClaimedToday}
         level={level}
+        nextLevelXp={nextLevelXp}
         onClaimDailyReward={claimDailyReward}
         onLogout={handleLogout}
+        quizRemaining={quizRemaining}
+        rewardXpRemaining={rewardXpRemaining}
         showStats={activeView === 'arena'}
         streak={progress.streak}
         username={progress.username}
@@ -728,16 +732,12 @@ function App() {
         {activeView === 'arena' && (
           <div className="tab-view arena-view" id="arena-panel" role="tabpanel">
             <AIStudyBuddyHub
-              assignmentsWaiting={assignmentsWaiting}
               humorMode={humorMode}
-              nextLevelXp={nextLevelXp}
               onContinue={() => setActiveView('trainer')}
               onCreateQuiz={() => setActiveView('analysis')}
               onExplain={() => setActiveView('trainer')}
               onToggleHumor={toggleHumorMode}
               onUpload={() => openAiArea('assignment-upload')}
-              quizRemaining={quizRemaining}
-              rewardXpRemaining={rewardXpRemaining}
             />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>

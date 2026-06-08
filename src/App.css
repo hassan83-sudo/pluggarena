@@ -217,6 +217,36 @@
   min-width: 0;
 }
 
+.dashboard-quick-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dashboard-quick-stats > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(141, 228, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.dashboard-quick-stats span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.dashboard-quick-stats strong {
+  overflow-wrap: anywhere;
+  color: var(--text-main);
+  font-size: 20px;
+}
+
 .arena-status-progress > div:first-child,
 .arena-status-action {
   display: flex;
@@ -2076,5 +2106,18 @@ summary {
 
   .arena-status-values strong {
     font-size: 22px;
+  }
+
+  .dashboard-quick-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .dashboard-quick-stats > div {
+    padding: 10px;
+  }
+
+  .dashboard-quick-stats strong {
+    font-size: 18px;
   }
 }

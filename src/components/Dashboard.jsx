@@ -1,18 +1,22 @@
 function Dashboard({
+  assignmentsWaiting,
   children,
   hasClaimedToday,
   level,
+  nextLevelXp,
   onClaimDailyReward,
   onLogout,
+  quizRemaining,
+  rewardXpRemaining,
   showStats,
   streak,
   username,
   xp,
 }) {
-  const nextLevelXp = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : xp
+  const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : xp
   const progress = level === 'Genius'
     ? 100
-    : Math.min(Math.round((xp / nextLevelXp) * 100), 100)
+    : Math.min(Math.round((xp / nextLevelTarget) * 100), 100)
 
   return (
     <header className={showStats ? 'dashboard' : 'dashboard dashboard-tabs-only'}>
@@ -54,6 +58,25 @@ function Dashboard({
               </div>
               <div className="progress-track">
                 <span style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+
+            <div className="dashboard-quick-stats" aria-label="Snabb statistik">
+              <div>
+                <span>Uppgifter kvar</span>
+                <strong>{assignmentsWaiting}</strong>
+              </div>
+              <div>
+                <span>Quiz kvar</span>
+                <strong>{quizRemaining}</strong>
+              </div>
+              <div>
+                <span>XP till nästa nivå</span>
+                <strong>{nextLevelXp}</strong>
+              </div>
+              <div>
+                <span>XP till Väla-kort</span>
+                <strong>{rewardXpRemaining}</strong>
               </div>
             </div>
 
