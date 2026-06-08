@@ -8,7 +8,6 @@ function AIStudyBuddyHub({
   onToggleHumor,
   onUpload,
   quizRemaining,
-  rewardXpRemaining,
   username,
 }) {
   return (
@@ -49,11 +48,6 @@ function AIStudyBuddyHub({
           <span aria-hidden="true">🏆</span>
           <strong>{nextLevelXp}</strong>
           <small>XP till nästa nivå</small>
-        </div>
-        <div>
-          <span aria-hidden="true">🎁</span>
-          <strong>{rewardXpRemaining}</strong>
-          <small>XP till Väla-presentkort</small>
         </div>
       </div>
 

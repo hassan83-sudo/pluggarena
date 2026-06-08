@@ -9,8 +9,6 @@ function Dashboard({
   username,
   xp,
 }) {
-  const rewardGoalXp = 5000
-  const rewardXpRemaining = Math.max(rewardGoalXp - xp, 0)
   const nextLevelXp = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : xp
   const progress = level === 'Genius'
     ? 100
@@ -20,14 +18,14 @@ function Dashboard({
     <header className={showStats ? 'dashboard' : 'dashboard dashboard-tabs-only'}>
       <div className="hero-copy">
         <div className="hero-topline">
-          <p className="eyebrow">PluggArena v2</p>
+        <p className="eyebrow">Din studiearena</p>
           <button className="ghost-button" type="button" onClick={onLogout}>
             Logga ut
           </button>
         </div>
         <h1>PluggArena</h1>
         <p className="subtitle">
-          Hej {username}, välj ämne, samla XP och bygg streak med ditt squad.
+          Hej {username}, redo att bygga vidare på din streak?
         </p>
         {children}
       </div>
@@ -59,16 +57,6 @@ function Dashboard({
             <div className="progress-track">
               <span style={{ width: `${progress}%` }} />
             </div>
-          </div>
-
-          <div className="arena-next-reward">
-            <span>Nästa belöning</span>
-            <strong>Väla-presentkort</strong>
-            <small>
-              {rewardXpRemaining > 0
-                ? `${rewardXpRemaining} XP kvar till Väla-presentkort`
-                : 'Väla-presentkort upplåst'}
-            </small>
           </div>
 
           <div className="arena-status-action">

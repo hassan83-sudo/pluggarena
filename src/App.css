@@ -1778,3 +1778,321 @@ summary {
     font-size: 22px;
   }
 }
+
+/* Mobile-first game dashboard */
+.app-shell {
+  padding-bottom: 108px;
+}
+
+.hero-copy,
+.panel,
+.stat-card {
+  border-color: var(--card-border);
+  border-radius: 24px;
+  background: var(--card-bg);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
+  backdrop-filter: none;
+}
+
+.hero-copy {
+  background:
+    linear-gradient(135deg, rgba(164, 255, 91, 0.08), transparent 55%),
+    var(--card-bg);
+}
+
+.hero-copy::after {
+  display: none;
+}
+
+.eyebrow,
+.leaderboard-list em,
+.reward em,
+.voice-status,
+.hint-box small {
+  color: var(--neon);
+}
+
+.subtitle,
+.stat-card span,
+.stat-card small,
+.ai-hub-header p:last-child,
+.ai-hub-summary small,
+.complete-card p,
+.buddy-card p,
+.hint-box p,
+.reward p {
+  color: var(--text-muted);
+}
+
+.arena-status-card {
+  border-color: rgba(164, 255, 91, 0.28);
+  background:
+    linear-gradient(145deg, rgba(164, 255, 91, 0.14), transparent 62%),
+    var(--card-bg-strong);
+}
+
+.arena-status-values > div {
+  border-color: rgba(164, 255, 91, 0.14);
+}
+
+.arena-status-values strong,
+.stat-card strong,
+.panel h2,
+.panel h3,
+.ai-hub-header h2,
+.assignment-section-heading h2,
+.leaderboard-list strong,
+.progress-grid strong,
+.squad-card strong,
+.reward strong {
+  color: var(--text-main);
+}
+
+.progress-track,
+.quiz-progress,
+.battle-score-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progress-track span,
+.quiz-progress span,
+.battle-score-track span {
+  background: linear-gradient(90deg, var(--neon-strong), var(--neon));
+}
+
+.ghost-button,
+.arena-status-action button,
+.login-form button,
+.squad-actions button,
+.ai-hub-actions button:first-child,
+.hint-button,
+.complete-card button {
+  color: #10200f;
+  background: var(--neon);
+  box-shadow: 0 10px 24px rgba(164, 255, 91, 0.16);
+}
+
+.ghost-button:hover,
+.arena-status-action button:hover,
+.ai-hub-actions button:first-child:hover {
+  background: var(--neon-strong);
+}
+
+.top-navigation {
+  position: fixed;
+  right: 50%;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  width: min(620px, calc(100% - 20px));
+  margin: 0;
+  padding: 7px;
+  border: 1px solid rgba(164, 255, 91, 0.16);
+  border-radius: 24px;
+  background: rgba(13, 24, 18, 0.96);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+  transform: translateX(50%);
+  backdrop-filter: blur(18px);
+}
+
+.top-navigation button {
+  display: grid;
+  min-width: 0;
+  min-height: 58px;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  padding: 5px 4px;
+  border: 0;
+  border-radius: 17px;
+  color: var(--text-muted);
+  background: transparent;
+  font-size: 11px;
+}
+
+.top-navigation .active {
+  color: #10200f;
+  background: var(--neon);
+  box-shadow: 0 8px 20px rgba(164, 255, 91, 0.18);
+}
+
+.navigation-icon {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.ai-hub-panel {
+  border-color: rgba(164, 255, 91, 0.24);
+  background:
+    linear-gradient(145deg, rgba(164, 255, 91, 0.08), transparent 58%),
+    var(--card-bg);
+}
+
+.ai-hub-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ai-hub-summary > div,
+.progress-grid article,
+.leaderboard-list li,
+.complete-card,
+.hint-box,
+.squad-card,
+.squad-actions,
+.reward,
+.profile-settings-content {
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.ai-hub-summary > div {
+  padding: 13px;
+}
+
+.ai-hub-summary strong {
+  color: var(--neon);
+}
+
+.ai-hub-actions button,
+.subject-tabs button,
+.battle-subjects button,
+.answer-button {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.subject-tabs .active,
+.battle-subjects .active,
+.score-pill,
+.assignment-analysis-meta span {
+  color: #10200f;
+  background: var(--neon);
+}
+
+.analysis-view {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 2fr);
+  gap: 12px;
+}
+
+.analysis-view .progress-panel,
+.analysis-view .quiz-panel,
+.trainer-view .buddy-main-panel {
+  grid-column: auto;
+}
+
+.trainer-view {
+  width: min(820px, 100%);
+  margin: 0 auto;
+}
+
+.buddy-avatar {
+  color: #10200f;
+  background: var(--neon);
+}
+
+.humor-mode-control button.active,
+.humor-mode-badge,
+.badge.unlocked {
+  color: #10200f;
+  background: var(--neon);
+}
+
+.assignment-dropzone {
+  border-color: rgba(164, 255, 91, 0.42);
+  background: var(--neon-soft);
+}
+
+.assignment-actions button,
+.next-hint-button,
+.battle-lobby-actions button,
+.battle-complete button {
+  color: #10200f;
+  background: var(--neon);
+}
+
+@media (max-width: 900px) {
+  .analysis-view {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    width: min(100% - 16px, 480px);
+    padding: 8px 0 102px;
+  }
+
+  .hero-copy,
+  .panel,
+  .stat-card {
+    border-radius: 22px;
+    padding: 16px;
+  }
+
+  .hero-copy {
+    padding-bottom: 16px;
+  }
+
+  .hero-topline {
+    align-items: flex-start;
+  }
+
+  .hero-copy h1 {
+    font-size: 38px;
+  }
+
+  .top-navigation {
+    right: 50%;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: calc(100% - 14px);
+    margin: 0;
+    padding: 6px;
+    overflow: visible;
+  }
+
+  .top-navigation button {
+    min-height: 60px;
+    padding: 5px 2px;
+    font-size: 10px;
+  }
+
+  .ai-hub-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ai-hub-summary > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding: 11px 8px;
+    text-align: center;
+  }
+
+  .ai-hub-summary > div > span {
+    display: none;
+  }
+
+  .ai-hub-summary strong {
+    font-size: 20px;
+  }
+
+  .ai-hub-summary small {
+    font-size: 11px;
+  }
+
+  .arena-status-values {
+    gap: 5px;
+  }
+
+  .arena-status-values > div {
+    padding-right: 6px;
+  }
+
+  .arena-status-values strong {
+    font-size: 22px;
+  }
+}

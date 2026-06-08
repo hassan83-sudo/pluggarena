@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import Login from './components/Login.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
+import Progress from './components/Progress.jsx'
 import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
@@ -39,13 +40,12 @@ const initialProgress = {
 }
 
 const dailyQuizTarget = 5
-const rewardGoalXp = 5000
-
 const navigationItems = [
-  { id: 'arena', label: 'Arena' },
-  { id: 'quiz', label: 'Quiz' },
-  { id: 'battle', label: 'Battle' },
-  { id: 'assignments', label: 'Uppgifter' },
+  { icon: '⌂', id: 'arena', label: 'Hem' },
+  { icon: '▥', id: 'analysis', label: 'Analys' },
+  { icon: '✦', id: 'trainer', label: 'Tränare' },
+  { icon: '⚔', id: 'battle', label: 'Utmaningar' },
+  { icon: '▤', id: 'assignments', label: 'Uppgifter' },
 ]
 
 function getUserKey(user) {
@@ -294,7 +294,7 @@ function App() {
   const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : progress.xp
   const nextLevelXp = Math.max(nextLevelTarget - progress.xp, 0)
   const quizRemaining = Math.max(dailyQuizTarget - quizCompletedToday, 0)
-  const rewardXpRemaining = Math.max(rewardGoalXp - progress.xp, 0)
+  const badges = getBadges(progress)
   const leaderboard = useMemo(
     () => [
       { name: progress.username, xp: progress.xp },
@@ -713,35 +713,42 @@ function App() {
               role="tab"
               type="button"
             >
-              {item.label}
+              <span className="navigation-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
             </button>
           ))}
         </nav>
       </Dashboard>
 
-      <AIStudyBuddyHub
-        assignmentsWaiting={assignmentsWaiting}
-        humorMode={humorMode}
-        nextLevelXp={nextLevelXp}
-        onContinue={() => openAiArea('ai-study-buddy')}
-        onCreateQuiz={() => setActiveView('quiz')}
-        onExplain={() => openAiArea('ai-study-buddy')}
-        onToggleHumor={toggleHumorMode}
-        onUpload={() => openAiArea('assignment-upload')}
-        quizRemaining={quizRemaining}
-        rewardXpRemaining={rewardXpRemaining}
-        username={progress.username || getUsernameFromUser(user)}
-      />
-
       <section className="tab-content" aria-live="polite">
         {activeView === 'arena' && (
           <div className="tab-view arena-view" id="arena-panel" role="tabpanel">
+            <AIStudyBuddyHub
+              assignmentsWaiting={assignmentsWaiting}
+              humorMode={humorMode}
+              nextLevelXp={nextLevelXp}
+              onContinue={() => setActiveView('trainer')}
+              onCreateQuiz={() => setActiveView('analysis')}
+              onExplain={() => setActiveView('trainer')}
+              onToggleHumor={toggleHumorMode}
+              onUpload={() => openAiArea('assignment-upload')}
+              quizRemaining={quizRemaining}
+              username={progress.username || getUsernameFromUser(user)}
+            />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>
         )}
 
-        {activeView === 'quiz' && (
-          <div className="tab-view quiz-view" id="quiz-panel" role="tabpanel">
+        {activeView === 'analysis' && (
+          <div className="tab-view analysis-view" id="analysis-panel" role="tabpanel">
+            <Progress
+              badges={badges}
+              correctAnswers={progress.correctAnswers}
+              level={level}
+              xp={progress.xp}
+            />
             <Quiz
               key={selectedSubject}
               onAnswerResult={handleAnswerResult}
@@ -753,13 +760,18 @@ function App() {
           </div>
         )}
 
+        {activeView === 'trainer' && (
+          <div className="tab-view trainer-view" id="trainer-panel" role="tabpanel">
+            <AIStudyBuddy humorMode={humorMode} standalone />
+          </div>
+        )}
+
         <div
           className="tab-view assignments-view"
           hidden={activeView !== 'assignments'}
           id="assignments-panel"
           role="tabpanel"
         >
-          <AIStudyBuddy humorMode={humorMode} standalone />
           <div className="assignment-section-heading">
             <p className="eyebrow">Uppgiftsverktyg</p>
             <h2>Ladda upp och analysera en uppgift</h2>
