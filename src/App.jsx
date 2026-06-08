@@ -738,7 +738,6 @@ function App() {
               onUpload={() => openAiArea('assignment-upload')}
               quizRemaining={quizRemaining}
               rewardXpRemaining={rewardXpRemaining}
-              username={progress.username || getUsernameFromUser(user)}
             />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>

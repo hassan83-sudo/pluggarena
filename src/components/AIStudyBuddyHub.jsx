@@ -9,7 +9,6 @@ function AIStudyBuddyHub({
   onUpload,
   quizRemaining,
   rewardXpRemaining,
-  username,
 }) {
   return (
     <section className="panel ai-hub-panel">
@@ -17,8 +16,8 @@ function AIStudyBuddyHub({
         <span className="buddy-avatar" aria-hidden="true">AI</span>
         <div>
           <p className="eyebrow">AI Study Buddy</p>
-          <h2>Hej {username} 👋</h2>
-          <p>Här är din personliga studieöversikt.</p>
+          <h2>Hjälp mig med en uppgift</h2>
+          <p>Starta med AI, skapa quiz eller fortsätt där du slutade.</p>
         </div>
         <div className="humor-mode-control">
           {humorMode && <span className="humor-mode-badge">Humorläge på</span>}
@@ -59,7 +58,7 @@ function AIStudyBuddyHub({
 
       <div className="ai-hub-actions">
         <button onClick={onUpload} type="button">
-          Hjälp mig med en uppgift
+          Ladda upp uppgift
         </button>
         <button onClick={onCreateQuiz} type="button">Skapa quiz</button>
         <button onClick={onExplain} type="button">Förklara något</button>

@@ -9,8 +9,6 @@ function Dashboard({
   username,
   xp,
 }) {
-  const rewardGoalXp = 5000
-  const rewardXpRemaining = Math.max(rewardGoalXp - xp, 0)
   const nextLevelXp = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : xp
   const progress = level === 'Genius'
     ? 100
@@ -57,16 +55,6 @@ function Dashboard({
               <div className="progress-track">
                 <span style={{ width: `${progress}%` }} />
               </div>
-            </div>
-
-            <div className="arena-next-reward">
-              <span>Nästa belöning</span>
-              <strong>Väla-presentkort</strong>
-              <small>
-                {rewardXpRemaining > 0
-                  ? `${rewardXpRemaining} XP kvar till Väla-presentkort`
-                  : 'Väla-presentkort upplåst'}
-              </small>
             </div>
 
             <div className="arena-status-action">

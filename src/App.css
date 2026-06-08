@@ -217,27 +217,6 @@
   min-width: 0;
 }
 
-.arena-next-reward {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-  padding: 9px 11px;
-  border: 1px solid rgba(255, 209, 102, 0.22);
-  border-radius: 8px;
-  background: rgba(255, 209, 102, 0.07);
-}
-
-.arena-next-reward span,
-.arena-next-reward small {
-  color: #b7c4dd;
-}
-
-.arena-next-reward strong {
-  overflow-wrap: anywhere;
-  color: #ffd166;
-  font-size: 15px;
-}
-
 .arena-status-progress > div:first-child,
 .arena-status-action {
   display: flex;
@@ -1685,7 +1664,7 @@ summary {
   .arena-status-card {
     grid-template-columns: 1fr;
     gap: 12px;
-    padding: 13px;
+    padding: 14px 0 0;
   }
 
   .arena-status-values strong {
@@ -1693,13 +1672,8 @@ summary {
   }
 
   .arena-status-progress,
-  .arena-next-reward,
   .arena-status-action {
     grid-column: 1;
-  }
-
-  .arena-next-reward {
-    padding: 8px 10px;
   }
 
   .arena-status-action {
@@ -1831,10 +1805,11 @@ summary {
 
 .arena-status-card {
   margin-top: 18px;
-  border-color: rgba(141, 228, 255, 0.25);
-  background:
-    linear-gradient(145deg, rgba(55, 229, 255, 0.14), rgba(168, 117, 255, 0.1) 72%),
-    var(--card-bg-strong);
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(141, 228, 255, 0.16);
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
