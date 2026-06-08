@@ -1784,6 +1784,11 @@ summary {
   padding-bottom: 108px;
 }
 
+.dashboard,
+.dashboard-tabs-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .hero-copy,
 .panel,
 .stat-card {
@@ -1796,7 +1801,7 @@ summary {
 
 .hero-copy {
   background:
-    linear-gradient(135deg, rgba(164, 255, 91, 0.08), transparent 55%),
+    linear-gradient(135deg, rgba(55, 229, 255, 0.1), rgba(168, 117, 255, 0.06) 58%, transparent),
     var(--card-bg);
 }
 
@@ -1825,14 +1830,16 @@ summary {
 }
 
 .arena-status-card {
-  border-color: rgba(164, 255, 91, 0.28);
+  margin-top: 18px;
+  border-color: rgba(141, 228, 255, 0.25);
   background:
-    linear-gradient(145deg, rgba(164, 255, 91, 0.14), transparent 62%),
+    linear-gradient(145deg, rgba(55, 229, 255, 0.14), rgba(168, 117, 255, 0.1) 72%),
     var(--card-bg-strong);
+  box-shadow: none;
 }
 
 .arena-status-values > div {
-  border-color: rgba(164, 255, 91, 0.14);
+  border-color: rgba(141, 228, 255, 0.14);
 }
 
 .arena-status-values strong,
@@ -1857,7 +1864,7 @@ summary {
 .progress-track span,
 .quiz-progress span,
 .battle-score-track span {
-  background: linear-gradient(90deg, var(--neon-strong), var(--neon));
+  background: linear-gradient(90deg, #37e5ff, #a875ff, #ff5ca8);
 }
 
 .ghost-button,
@@ -1867,15 +1874,15 @@ summary {
 .ai-hub-actions button:first-child,
 .hint-button,
 .complete-card button {
-  color: #10200f;
-  background: var(--neon);
-  box-shadow: 0 10px 24px rgba(164, 255, 91, 0.16);
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+  box-shadow: 0 10px 24px rgba(55, 229, 255, 0.16);
 }
 
 .ghost-button:hover,
 .arena-status-action button:hover,
 .ai-hub-actions button:first-child:hover {
-  background: var(--neon-strong);
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
 }
 
 .top-navigation {
@@ -1889,9 +1896,9 @@ summary {
   width: min(620px, calc(100% - 20px));
   margin: 0;
   padding: 7px;
-  border: 1px solid rgba(164, 255, 91, 0.16);
+  border: 1px solid rgba(141, 228, 255, 0.16);
   border-radius: 24px;
-  background: rgba(13, 24, 18, 0.96);
+  background: rgba(13, 18, 34, 0.96);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
   transform: translateX(50%);
   backdrop-filter: blur(18px);
@@ -1913,9 +1920,9 @@ summary {
 }
 
 .top-navigation .active {
-  color: #10200f;
-  background: var(--neon);
-  box-shadow: 0 8px 20px rgba(164, 255, 91, 0.18);
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  box-shadow: 0 8px 20px rgba(55, 229, 255, 0.18);
 }
 
 .navigation-icon {
@@ -1924,14 +1931,14 @@ summary {
 }
 
 .ai-hub-panel {
-  border-color: rgba(164, 255, 91, 0.24);
+  border-color: rgba(141, 228, 255, 0.24);
   background:
-    linear-gradient(145deg, rgba(164, 255, 91, 0.08), transparent 58%),
+    linear-gradient(145deg, rgba(55, 229, 255, 0.09), rgba(168, 117, 255, 0.06) 68%, transparent),
     var(--card-bg);
 }
 
 .ai-hub-summary {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .ai-hub-summary > div,
@@ -1969,8 +1976,8 @@ summary {
 .battle-subjects .active,
 .score-pill,
 .assignment-analysis-meta span {
-  color: #10200f;
-  background: var(--neon);
+  color: #07111f;
+  background: #8de4ff;
 }
 
 .analysis-view {
@@ -1991,19 +1998,19 @@ summary {
 }
 
 .buddy-avatar {
-  color: #10200f;
-  background: var(--neon);
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #ffd166);
 }
 
 .humor-mode-control button.active,
 .humor-mode-badge,
 .badge.unlocked {
-  color: #10200f;
-  background: var(--neon);
+  color: #07111f;
+  background: linear-gradient(135deg, #ffd166, #8de4ff);
 }
 
 .assignment-dropzone {
-  border-color: rgba(164, 255, 91, 0.42);
+  border-color: rgba(141, 228, 255, 0.42);
   background: var(--neon-soft);
 }
 
@@ -2011,8 +2018,8 @@ summary {
 .next-hint-button,
 .battle-lobby-actions button,
 .battle-complete button {
-  color: #10200f;
-  background: var(--neon);
+  color: #07111f;
+  background: #8de4ff;
 }
 
 @media (max-width: 900px) {
@@ -2062,7 +2069,7 @@ summary {
   }
 
   .ai-hub-summary {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ai-hub-summary > div {

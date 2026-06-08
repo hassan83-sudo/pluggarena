@@ -40,6 +40,7 @@ const initialProgress = {
 }
 
 const dailyQuizTarget = 5
+const rewardGoalXp = 5000
 const navigationItems = [
   { icon: '⌂', id: 'arena', label: 'Hem' },
   { icon: '▥', id: 'analysis', label: 'Analys' },
@@ -294,6 +295,7 @@ function App() {
   const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : progress.xp
   const nextLevelXp = Math.max(nextLevelTarget - progress.xp, 0)
   const quizRemaining = Math.max(dailyQuizTarget - quizCompletedToday, 0)
+  const rewardXpRemaining = Math.max(rewardGoalXp - progress.xp, 0)
   const badges = getBadges(progress)
   const leaderboard = useMemo(
     () => [
@@ -735,6 +737,7 @@ function App() {
               onToggleHumor={toggleHumorMode}
               onUpload={() => openAiArea('assignment-upload')}
               quizRemaining={quizRemaining}
+              rewardXpRemaining={rewardXpRemaining}
               username={progress.username || getUsernameFromUser(user)}
             />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
