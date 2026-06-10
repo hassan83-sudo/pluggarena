@@ -10,6 +10,18 @@ import {
   summarizeBattleHistory,
 } from '../lib/battles.js'
 
+function readNextOpponent(userId) {
+  try {
+    const value = window.localStorage.getItem(
+      `pluggarena.lastFriendChallenge.${userId}`,
+    )
+    const challenge = value ? JSON.parse(value) : null
+    return challenge?.friendName || ''
+  } catch {
+    return ''
+  }
+}
+
 function BattleHistory({ history }) {
   const stats = summarizeBattleHistory(history)
 
@@ -24,18 +36,21 @@ function BattleHistory({ history }) {
 
       <div className="battle-stats-grid">
         <article>
-          <span>Vinster</span>
+          <span>🏆 Vinster</span>
           <strong>{stats.wins}</strong>
         </article>
         <article>
-          <span>Förluster</span>
-          <strong>{stats.losses}</strong>
+          <span>⚔️ Battles</span>
+          <strong>{stats.total}</strong>
         </article>
         <article>
-          <span>Win rate</span>
+          <span>📈 Vinstprocent</span>
           <strong>{stats.winRate}%</strong>
         </article>
       </div>
+      <p className="battle-loss-summary">
+        Förluster: <strong>{stats.losses}</strong>
+      </p>
 
       <div className="battle-history-list">
         {history.length === 0 ? (
@@ -169,6 +184,9 @@ function BattleMode({ onAwardXp, questionBank, subjects, user }) {
   const [error, setError] = useState('')
   const [isBusy, setIsBusy] = useState(false)
   const [rewardMessage, setRewardMessage] = useState('')
+  const [nextOpponent, setNextOpponent] = useState(() =>
+    readNextOpponent(user.id),
+  )
   const rewardClaimRef = useRef('')
   const questions = questionBank[battle?.subject || selectedSubject]
   const currentQuestion = questions[questionIndex % questions.length]
@@ -176,6 +194,24 @@ function BattleMode({ onAwardXp, questionBank, subjects, user }) {
     () => ({ id: user.id, name: user.name }),
     [user.id, user.name],
   )
+
+  useEffect(() => {
+    let isCancelled = false
+
+    function syncNextOpponent() {
+      if (!isCancelled) {
+        setNextOpponent(readNextOpponent(user.id))
+      }
+    }
+
+    queueMicrotask(syncNextOpponent)
+    window.addEventListener('pluggarena:friend-challenge', syncNextOpponent)
+
+    return () => {
+      isCancelled = true
+      window.removeEventListener('pluggarena:friend-challenge', syncNextOpponent)
+    }
+  }, [user.id])
 
   useEffect(() => {
     let isMounted = true
@@ -339,6 +375,16 @@ function BattleMode({ onAwardXp, questionBank, subjects, user }) {
 
   return (
     <section className="battle-layout">
+      <section className="panel battle-next-opponent">
+        <div>
+          <p className="eyebrow">Friends Challenge</p>
+          <h2>
+            Nästa motståndare: <strong>{nextOpponent || 'Ingen vald'}</strong>
+          </h2>
+        </div>
+        <span>{nextOpponent ? 'Redo för battle' : 'Utmana en kompis på Hem'}</span>
+      </section>
+
       {!battle ? (
         <BattleLobby
           isBusy={isBusy}

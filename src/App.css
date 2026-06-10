@@ -1493,6 +1493,33 @@ summary {
   align-items: start;
 }
 
+.battle-next-opponent {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: rgba(141, 228, 255, 0.28);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.12), rgba(168, 117, 255, 0.1)),
+    var(--card-bg);
+}
+
+.battle-next-opponent h2 strong {
+  color: #8de4ff;
+}
+
+.battle-next-opponent > span {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid rgba(168, 117, 255, 0.22);
+  border-radius: 999px;
+  color: #d8c8ff;
+  background: rgba(168, 117, 255, 0.09);
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .battle-lobby-panel,
 .battle-game-panel {
   min-height: 470px;
@@ -1739,6 +1766,16 @@ summary {
 .battle-stats-grid strong {
   color: #ffffff;
   font-size: 22px;
+}
+
+.battle-loss-summary {
+  margin: -6px 0 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.battle-loss-summary strong {
+  color: #ff8fab;
 }
 
 .battle-history-list {
@@ -2141,6 +2178,11 @@ summary {
 
   .battle-layout {
     grid-template-columns: 1fr;
+  }
+
+  .battle-next-opponent {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .battle-entry-panel {

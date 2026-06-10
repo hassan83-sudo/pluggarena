@@ -864,6 +864,7 @@ function App() {
         sentAt: new Date().toISOString(),
       },
     )
+    window.dispatchEvent(new CustomEvent('pluggarena:friend-challenge'))
   }
 
   function resetDemoData() {
