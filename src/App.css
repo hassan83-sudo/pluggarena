@@ -571,6 +571,157 @@
   color: #ffd166;
 }
 
+.level-rewards-panel {
+  margin-bottom: 12px;
+  border-color: rgba(168, 117, 255, 0.3);
+  background:
+    linear-gradient(145deg, rgba(168, 117, 255, 0.13), rgba(55, 229, 255, 0.06) 70%, transparent),
+    var(--card-bg);
+}
+
+.level-rewards-heading {
+  align-items: center;
+}
+
+.level-number {
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border-radius: 999px;
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  font-size: 13px;
+}
+
+.level-up-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  padding: 11px 13px;
+  border: 1px solid rgba(141, 228, 255, 0.3);
+  border-radius: 15px;
+  color: #dff8ff;
+  background: rgba(141, 228, 255, 0.1);
+}
+
+.level-up-notice span {
+  color: #ffd166;
+  font-size: 18px;
+}
+
+.level-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.level-overview > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.level-overview span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.level-overview strong {
+  overflow-wrap: anywhere;
+  color: var(--text-main);
+  font-size: 23px;
+}
+
+.level-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 7px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.level-progress-copy small {
+  color: #8de4ff;
+  font-weight: 900;
+}
+
+.level-progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.level-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #37e5ff, #a875ff, #ff5ca8);
+}
+
+.level-reward-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.level-reward {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.level-reward.locked {
+  opacity: 0.48;
+  filter: saturate(0.45);
+}
+
+.level-reward.unlocked {
+  border-color: rgba(141, 228, 255, 0.3);
+  background: linear-gradient(145deg, rgba(55, 229, 255, 0.1), rgba(168, 117, 255, 0.08));
+}
+
+.level-reward > span {
+  font-size: 25px;
+}
+
+.level-reward div {
+  display: grid;
+  gap: 3px;
+}
+
+.level-reward small {
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.level-reward strong {
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.level-reward em {
+  grid-column: 1 / -1;
+  color: #8de4ff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .utility-sections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2371,6 +2522,26 @@ summary {
   }
 
   .daily-quest-list {
+    grid-template-columns: 1fr;
+  }
+
+  .level-rewards-heading {
+    align-items: flex-start;
+  }
+
+  .level-overview {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .level-overview > div {
+    padding: 10px 8px;
+  }
+
+  .level-overview strong {
+    font-size: 19px;
+  }
+
+  .level-reward-list {
     grid-template-columns: 1fr;
   }
 }

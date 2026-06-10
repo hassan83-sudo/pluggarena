@@ -8,6 +8,7 @@ import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
+import LevelRewards from './components/LevelRewards.jsx'
 import Login from './components/Login.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
 import Progress from './components/Progress.jsx'
@@ -16,6 +17,7 @@ import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import { questionBank, subjects } from './data/questions.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
+import { getLevelProgress } from './lib/levels.js'
 
 const storageKeys = {
   demoUsers: 'pluggarena.demoUsers',
@@ -23,6 +25,7 @@ const storageKeys = {
   humorMode: 'pluggarena.humorMode',
   achievementStats: 'pluggarena.achievementStats',
   dailyQuests: 'pluggarena.dailyQuests',
+  levelProgress: 'pluggarena.levelProgress',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -326,6 +329,7 @@ function App() {
   const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
   const [achievementStats, setAchievementStats] = useState(initialAchievementStats)
   const [dailyQuests, setDailyQuests] = useState(createInitialDailyQuests)
+  const [levelNotice, setLevelNotice] = useState(null)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const todayKey = getTodayKey()
@@ -489,6 +493,46 @@ function App() {
       isCancelled = true
     }
   }, [todayKey, user])
+
+  useEffect(() => {
+    if (!user) {
+      return undefined
+    }
+
+    let isCancelled = false
+    const currentLevel = getLevelProgress(progress.xp).currentLevel
+    const key = getScopedKey(storageKeys.levelProgress, user)
+    const stored = readStoredValue(key, null)
+
+    queueMicrotask(() => {
+      if (isCancelled) {
+        return
+      }
+
+      if (!stored?.highestLevel) {
+        writeStoredValue(key, { highestLevel: currentLevel })
+        return
+      }
+
+      if (currentLevel > stored.highestLevel) {
+        writeStoredValue(key, { highestLevel: currentLevel })
+        setLevelNotice(currentLevel)
+      }
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [progress.xp, user])
+
+  useEffect(() => {
+    if (!levelNotice) {
+      return undefined
+    }
+
+    const timer = window.setTimeout(() => setLevelNotice(null), 5000)
+    return () => window.clearTimeout(timer)
+  }, [levelNotice])
 
   const handleAssignmentsChange = useCallback((items) => {
     setAssignmentsWaiting(
@@ -810,6 +854,10 @@ function App() {
       getScopedKey(storageKeys.dailyQuests, user),
       nextDailyQuests,
     )
+    writeStoredValue(
+      getScopedKey(storageKeys.levelProgress, user),
+      { highestLevel: getLevelProgress(nextProgress.xp).currentLevel },
+    )
     writeStoredValue('pluggarena.battles', [])
     writeStoredValue('pluggarena.battleResults', [])
 
@@ -825,6 +873,7 @@ function App() {
     setAssignmentsWaiting(0)
     setAchievementStats(initialAchievementStats)
     setDailyQuests(nextDailyQuests)
+    setLevelNotice(null)
     setQuizCompletedToday(0)
     setHumorMode(false)
     writeStoredValue(storageKeys.humorMode, false)
@@ -908,6 +957,7 @@ function App() {
               xp={progress.xp}
             />
             <DailyQuests quests={dailyQuests} />
+            <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>
         )}
