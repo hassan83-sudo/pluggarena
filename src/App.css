@@ -663,6 +663,89 @@
   box-shadow: 0 10px 24px rgba(55, 229, 255, 0.14);
 }
 
+.weekly-report-panel {
+  margin-bottom: 12px;
+  border-color: rgba(168, 117, 255, 0.28);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.1), rgba(168, 117, 255, 0.1) 70%, transparent),
+    var(--card-bg);
+}
+
+.weekly-report-heading {
+  align-items: center;
+}
+
+.weekly-report-period {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid rgba(141, 228, 255, 0.24);
+  border-radius: 999px;
+  color: #8de4ff;
+  background: rgba(55, 229, 255, 0.07);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.weekly-report-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.weekly-report-metrics article {
+  min-width: 0;
+  padding: 12px 10px;
+  border: 1px solid rgba(141, 228, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(7, 17, 31, 0.36);
+}
+
+.weekly-report-metrics span,
+.weekly-report-summary span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.weekly-report-metrics strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-main);
+  font-size: 20px;
+}
+
+.weekly-report-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.weekly-report-summary > div {
+  padding: 12px;
+  border: 1px solid rgba(168, 117, 255, 0.16);
+  border-radius: 16px;
+  background: rgba(168, 117, 255, 0.055);
+}
+
+.weekly-report-summary p {
+  margin: 5px 0 0;
+  color: var(--text-main);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.weekly-report-button {
+  margin-top: 12px;
+  padding: 0 16px;
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+  box-shadow: 0 10px 24px rgba(55, 229, 255, 0.14);
+}
+
 .level-rewards-panel {
   margin-bottom: 12px;
   border-color: rgba(168, 117, 255, 0.3);
@@ -2848,6 +2931,22 @@ summary {
   }
 
   .study-plan-button {
+    width: 100%;
+  }
+
+  .weekly-report-heading {
+    align-items: flex-start;
+  }
+
+  .weekly-report-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weekly-report-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .weekly-report-button {
     width: 100%;
   }
 

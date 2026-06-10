@@ -17,6 +17,7 @@ import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
+import WeeklyReport from './components/WeeklyReport.jsx'
 import { questionBank, subjects } from './data/questions.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 import { getLevelProgress } from './lib/levels.js'
@@ -31,6 +32,7 @@ const storageKeys = {
   leaderboard: 'pluggarena.leaderboard',
   friends: 'pluggarena.friends',
   lastFriendChallenge: 'pluggarena.lastFriendChallenge',
+  weeklyActivity: 'pluggarena.weeklyActivity',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -77,6 +79,24 @@ function createInitialDailyQuests(date = getTodayKey()) {
     date,
     quizCompleted: 0,
     rewardClaimed: false,
+    xpEarned: 0,
+  }
+}
+
+function getWeekKey(date = new Date()) {
+  const start = new Date(date)
+  const day = start.getDay()
+  const daysSinceMonday = day === 0 ? 6 : day - 1
+  start.setDate(start.getDate() - daysSinceMonday)
+  return start.toISOString().slice(0, 10)
+}
+
+function createInitialWeeklyActivity(weekKey = getWeekKey()) {
+  return {
+    aiQuestions: 0,
+    analyzedAssignments: 0,
+    quizCompleted: 0,
+    weekKey,
     xpEarned: 0,
   }
 }
@@ -218,6 +238,14 @@ function readDailyQuests(user) {
   return currentQuests
 }
 
+function readWeeklyActivity(user) {
+  const weekKey = getWeekKey()
+  const key = `${getScopedKey(storageKeys.weeklyActivity, user)}.${weekKey}`
+  const activity = readStoredValue(key, createInitialWeeklyActivity(weekKey))
+  writeStoredValue(key, activity)
+  return activity
+}
+
 function getLevel(xp) {
   if (xp >= 1000) {
     return 'Genius'
@@ -353,6 +381,9 @@ function App() {
   const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
   const [achievementStats, setAchievementStats] = useState(initialAchievementStats)
   const [dailyQuests, setDailyQuests] = useState(createInitialDailyQuests)
+  const [weeklyActivity, setWeeklyActivity] = useState(
+    createInitialWeeklyActivity,
+  )
   const [levelNotice, setLevelNotice] = useState(null)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
@@ -519,6 +550,22 @@ function App() {
   }, [todayKey, user])
 
   useEffect(() => {
+    let isCancelled = false
+
+    queueMicrotask(() => {
+      if (!isCancelled) {
+        setWeeklyActivity(
+          user ? readWeeklyActivity(user) : createInitialWeeklyActivity(),
+        )
+      }
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [user])
+
+  useEffect(() => {
     if (!user) {
       return undefined
     }
@@ -657,7 +704,29 @@ function App() {
 
     if (shouldReward) {
       addXp(50)
+      recordWeeklyActivity({ xpEarned: 50 })
     }
+  }
+
+  function recordWeeklyActivity(changes) {
+    if (!user) {
+      return
+    }
+
+    const weekKey = getWeekKey()
+    const key = `${getScopedKey(storageKeys.weeklyActivity, user)}.${weekKey}`
+    const current = readWeeklyActivity(user)
+    const nextActivity = {
+      ...current,
+      aiQuestions: current.aiQuestions + (changes.aiQuestions || 0),
+      analyzedAssignments:
+        current.analyzedAssignments + (changes.analyzedAssignments || 0),
+      quizCompleted: current.quizCompleted + (changes.quizCompleted || 0),
+      xpEarned: current.xpEarned + (changes.xpEarned || 0),
+    }
+
+    writeStoredValue(key, nextActivity)
+    setWeeklyActivity(nextActivity)
   }
 
   useEffect(() => {
@@ -817,6 +886,7 @@ function App() {
     if (result.isCorrect) {
       persistProgress(nextProgress)
       recordDailyQuestProgress({ xpEarned: 100 })
+      recordWeeklyActivity({ xpEarned: 100 })
     }
   }
 
@@ -832,6 +902,7 @@ function App() {
       xp: progress.xp + 50,
     })
     recordDailyQuestProgress({ xpEarned: 50 })
+    recordWeeklyActivity({ xpEarned: 50 })
   }
 
   function saveSquad(name) {
@@ -855,6 +926,7 @@ function App() {
       xp: progress.xp + xp,
     })
     recordDailyQuestProgress({ xpEarned: xp })
+    recordWeeklyActivity({ xpEarned: xp })
   }
 
   function challengeFriend(friend) {
@@ -874,6 +946,7 @@ function App() {
       username: progress.username || getUsernameFromUser(user),
     }
     const nextSquad = 'PluggSquad'
+    const nextWeeklyActivity = createInitialWeeklyActivity()
 
     clearPluggArenaStorage()
     writeStoredValue(storageKeys.demoUsers, defaultDemoUsers)
@@ -890,6 +963,10 @@ function App() {
     writeStoredValue(
       getScopedKey(storageKeys.dailyQuests, user),
       nextDailyQuests,
+    )
+    writeStoredValue(
+      `${getScopedKey(storageKeys.weeklyActivity, user)}.${nextWeeklyActivity.weekKey}`,
+      nextWeeklyActivity,
     )
     writeStoredValue(
       getScopedKey(storageKeys.levelProgress, user),
@@ -912,6 +989,7 @@ function App() {
     setAssignmentsWaiting(0)
     setAchievementStats(initialAchievementStats)
     setDailyQuests(nextDailyQuests)
+    setWeeklyActivity(nextWeeklyActivity)
     setLevelNotice(null)
     setQuizCompletedToday(0)
     setHumorMode(false)
@@ -1004,6 +1082,13 @@ function App() {
               streak={progress.streak}
               userId={user.id}
             />
+            <WeeklyReport
+              activity={weeklyActivity}
+              key={`${user.id}-${weeklyActivity.weekKey}`}
+              streak={progress.streak}
+              userId={user.id}
+              weekKey={weeklyActivity.weekKey}
+            />
             <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
             <FriendsPanel friends={friends} onChallenge={challengeFriend} />
@@ -1024,6 +1109,7 @@ function App() {
               onQuizComplete={() => {
                 incrementAchievementStat('quizCompleted')
                 recordDailyQuestProgress({ quizCompleted: 1 })
+                recordWeeklyActivity({ quizCompleted: 1 })
               }}
               questionBank={questionBank}
               selectedSubject={selectedSubject}
@@ -1040,6 +1126,7 @@ function App() {
               onQuestionAsked={() => {
                 incrementAchievementStat('aiQuestions')
                 recordDailyQuestProgress({ aiQuestions: 1 })
+                recordWeeklyActivity({ aiQuestions: 1 })
               }}
               standalone
             />
@@ -1058,9 +1145,10 @@ function App() {
           </div>
             <AssignmentUpload
               humorMode={humorMode}
-              onAnalysisComplete={() =>
+              onAnalysisComplete={() => {
                 recordDailyQuestProgress({ analyzedAssignments: 1 })
-              }
+                recordWeeklyActivity({ analyzedAssignments: 1 })
+              }}
               onAssignmentsChange={handleAssignmentsChange}
               user={{ id: user.id, name: progress.username }}
             />
