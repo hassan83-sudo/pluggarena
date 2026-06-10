@@ -458,6 +458,119 @@
   background: linear-gradient(90deg, #37e5ff, #a875ff);
 }
 
+.daily-quests-panel {
+  margin-bottom: 12px;
+  border-color: rgba(141, 228, 255, 0.24);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.09), rgba(168, 117, 255, 0.07) 68%, transparent),
+    var(--card-bg);
+}
+
+.daily-quests-panel.all-complete {
+  border-color: rgba(110, 231, 183, 0.42);
+}
+
+.daily-quests-heading {
+  align-items: center;
+}
+
+.daily-quests-count {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid rgba(168, 117, 255, 0.24);
+  border-radius: 999px;
+  color: #d8c8ff;
+  background: rgba(168, 117, 255, 0.1);
+  font-size: 12px;
+}
+
+.daily-quest-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.daily-quest {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.daily-quest.complete {
+  border-color: rgba(141, 228, 255, 0.3);
+  background: rgba(141, 228, 255, 0.09);
+}
+
+.daily-quest-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 11px;
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  font-weight: 1000;
+}
+
+.daily-quest > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.daily-quest strong {
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.daily-quest small {
+  color: #8de4ff;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.daily-quest-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.daily-quest-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #37e5ff, #a875ff);
+}
+
+.daily-quests-reward {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 209, 102, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 209, 102, 0.07);
+}
+
+.daily-quests-reward span {
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.daily-quests-reward strong {
+  color: #ffd166;
+}
+
 .utility-sections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2247,5 +2360,17 @@ summary {
 
   .achievement-copy p {
     min-height: 0;
+  }
+
+  .daily-quests-heading {
+    align-items: flex-start;
+  }
+
+  .daily-quests-count {
+    white-space: nowrap;
+  }
+
+  .daily-quest-list {
+    grid-template-columns: 1fr;
   }
 }

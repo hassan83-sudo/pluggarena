@@ -6,6 +6,7 @@ import Achievements from './components/Achievements.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
+import DailyQuests from './components/DailyQuests.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import Login from './components/Login.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
@@ -21,6 +22,7 @@ const storageKeys = {
   localAuth: 'pluggarena.localAuth',
   humorMode: 'pluggarena.humorMode',
   achievementStats: 'pluggarena.achievementStats',
+  dailyQuests: 'pluggarena.dailyQuests',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -45,6 +47,17 @@ const initialAchievementStats = {
   aiQuestions: 0,
   analyzedAssignments: 0,
   quizCompleted: 0,
+}
+
+function createInitialDailyQuests(date = getTodayKey()) {
+  return {
+    aiQuestions: 0,
+    analyzedAssignments: 0,
+    date,
+    quizCompleted: 0,
+    rewardClaimed: false,
+    xpEarned: 0,
+  }
 }
 
 const dailyQuizTarget = 5
@@ -175,6 +188,15 @@ function readAchievementStats(user) {
   return stats
 }
 
+function readDailyQuests(user) {
+  const key = getScopedKey(storageKeys.dailyQuests, user)
+  const fallback = createInitialDailyQuests()
+  const quests = readStoredValue(key, fallback)
+  const currentQuests = quests.date === fallback.date ? quests : fallback
+  writeStoredValue(key, currentQuests)
+  return currentQuests
+}
+
 function getLevel(xp) {
   if (xp >= 1000) {
     return 'Genius'
@@ -303,6 +325,7 @@ function App() {
   )
   const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
   const [achievementStats, setAchievementStats] = useState(initialAchievementStats)
+  const [dailyQuests, setDailyQuests] = useState(createInitialDailyQuests)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const todayKey = getTodayKey()
@@ -343,6 +366,7 @@ function App() {
           setProgress(readProgress(localUser))
           setSquad(readSquad(localUser))
           setAchievementStats(readAchievementStats(localUser))
+          setDailyQuests(readDailyQuests(localUser))
         }
 
         if (isMounted) {
@@ -369,6 +393,7 @@ function App() {
             setProgress(loadedData.progress)
             setSquad(loadedData.squad)
             setAchievementStats(readAchievementStats(sessionUser))
+            setDailyQuests(readDailyQuests(sessionUser))
             writeProgress(sessionUser, loadedData.progress)
             writeSquad(sessionUser, loadedData.squad)
           }
@@ -409,6 +434,7 @@ function App() {
           setProgress(initialProgress)
           setSquad('')
           setAchievementStats(initialAchievementStats)
+          setDailyQuests(createInitialDailyQuests())
           return
         }
 
@@ -420,6 +446,7 @@ function App() {
             setProgress(loadedData.progress)
             setSquad(loadedData.squad)
             setAchievementStats(readAchievementStats(sessionUser))
+            setDailyQuests(readDailyQuests(sessionUser))
             writeProgress(sessionUser, loadedData.progress)
             writeSquad(sessionUser, loadedData.squad)
           }
@@ -509,6 +536,62 @@ function App() {
     })
   }
 
+  function addXp(amount) {
+    setProgress((current) => {
+      const nextProgress = {
+        ...current,
+        xp: current.xp + amount,
+      }
+
+      writeProgress(user, nextProgress)
+
+      if (isSupabaseConfigured && user?.id) {
+        saveSupabaseProfile(user, nextProgress, squad).catch((error) => {
+          setAuthError(
+            error instanceof Error
+              ? error.message
+              : 'Kunde inte spara profilen i Supabase.',
+          )
+        })
+      }
+
+      return nextProgress
+    })
+  }
+
+  function recordDailyQuestProgress(changes) {
+    if (!user) {
+      return
+    }
+
+    const key = getScopedKey(storageKeys.dailyQuests, user)
+    const current = readDailyQuests(user)
+    const nextQuests = {
+      ...current,
+      aiQuestions: current.aiQuestions + (changes.aiQuestions || 0),
+      analyzedAssignments:
+        current.analyzedAssignments + (changes.analyzedAssignments || 0),
+      quizCompleted: current.quizCompleted + (changes.quizCompleted || 0),
+      xpEarned: current.xpEarned + (changes.xpEarned || 0),
+    }
+    const allComplete =
+      nextQuests.quizCompleted >= 1 &&
+      nextQuests.aiQuestions >= 3 &&
+      nextQuests.analyzedAssignments >= 1 &&
+      nextQuests.xpEarned >= 100
+    const shouldReward = allComplete && !nextQuests.rewardClaimed
+    const savedQuests = shouldReward
+      ? { ...nextQuests, rewardClaimed: true }
+      : nextQuests
+
+    writeStoredValue(key, savedQuests)
+    setDailyQuests(savedQuests)
+
+    if (shouldReward) {
+      addXp(50)
+    }
+  }
+
   useEffect(() => {
     if (activeView !== 'assignments' || !aiTarget) {
       return undefined
@@ -572,6 +655,7 @@ function App() {
       setProgress(nextProgress)
       setSquad(readSquad(localUser))
       setAchievementStats(readAchievementStats(localUser))
+      setDailyQuests(readDailyQuests(localUser))
       writeProgress(localUser, nextProgress)
       return
     }
@@ -610,6 +694,7 @@ function App() {
     })
     setSquad(loadedData.squad)
     setAchievementStats(readAchievementStats(nextUser))
+    setDailyQuests(readDailyQuests(nextUser))
   }
 
   async function handleLogout() {
@@ -626,6 +711,7 @@ function App() {
     setProgress(initialProgress)
     setSquad('')
     setAchievementStats(initialAchievementStats)
+    setDailyQuests(createInitialDailyQuests())
   }
 
   function saveQuizResult(result) {
@@ -662,6 +748,7 @@ function App() {
 
     if (result.isCorrect) {
       persistProgress(nextProgress)
+      recordDailyQuestProgress({ xpEarned: 100 })
     }
   }
 
@@ -676,6 +763,7 @@ function App() {
       streak: progress.streak + 1,
       xp: progress.xp + 50,
     })
+    recordDailyQuestProgress({ xpEarned: 50 })
   }
 
   function saveSquad(name) {
@@ -698,6 +786,7 @@ function App() {
       ...progress,
       xp: progress.xp + xp,
     })
+    recordDailyQuestProgress({ xpEarned: xp })
   }
 
   function resetDemoData() {
@@ -716,6 +805,11 @@ function App() {
       getScopedKey(storageKeys.achievementStats, user),
       initialAchievementStats,
     )
+    const nextDailyQuests = createInitialDailyQuests()
+    writeStoredValue(
+      getScopedKey(storageKeys.dailyQuests, user),
+      nextDailyQuests,
+    )
     writeStoredValue('pluggarena.battles', [])
     writeStoredValue('pluggarena.battleResults', [])
 
@@ -730,6 +824,7 @@ function App() {
     setActiveView('arena')
     setAssignmentsWaiting(0)
     setAchievementStats(initialAchievementStats)
+    setDailyQuests(nextDailyQuests)
     setQuizCompletedToday(0)
     setHumorMode(false)
     writeStoredValue(storageKeys.humorMode, false)
@@ -812,6 +907,7 @@ function App() {
               streak={progress.streak}
               xp={progress.xp}
             />
+            <DailyQuests quests={dailyQuests} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>
         )}
@@ -827,7 +923,10 @@ function App() {
             <Quiz
               key={selectedSubject}
               onAnswerResult={handleAnswerResult}
-              onQuizComplete={() => incrementAchievementStat('quizCompleted')}
+              onQuizComplete={() => {
+                incrementAchievementStat('quizCompleted')
+                recordDailyQuestProgress({ quizCompleted: 1 })
+              }}
               questionBank={questionBank}
               selectedSubject={selectedSubject}
               subjects={subjects}
@@ -840,7 +939,10 @@ function App() {
           <div className="tab-view trainer-view" id="trainer-panel" role="tabpanel">
             <AIStudyBuddy
               humorMode={humorMode}
-              onQuestionAsked={() => incrementAchievementStat('aiQuestions')}
+              onQuestionAsked={() => {
+                incrementAchievementStat('aiQuestions')
+                recordDailyQuestProgress({ aiQuestions: 1 })
+              }}
               standalone
             />
           </div>
@@ -858,6 +960,9 @@ function App() {
           </div>
             <AssignmentUpload
               humorMode={humorMode}
+              onAnalysisComplete={() =>
+                recordDailyQuestProgress({ analyzedAssignments: 1 })
+              }
               onAssignmentsChange={handleAssignmentsChange}
               user={{ id: user.id, name: progress.username }}
             />

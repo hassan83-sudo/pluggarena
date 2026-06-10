@@ -70,7 +70,12 @@ function AssignmentPreview({ assignment, previewUrl }) {
   )
 }
 
-function AssignmentUpload({ humorMode = false, onAssignmentsChange, user }) {
+function AssignmentUpload({
+  humorMode = false,
+  onAnalysisComplete = () => {},
+  onAssignmentsChange,
+  user,
+}) {
   const [file, setFile] = useState(null)
   const [fileData, setFileData] = useState('')
   const [title, setTitle] = useState('')
@@ -264,6 +269,7 @@ function AssignmentUpload({ humorMode = false, onAssignmentsChange, user }) {
       setAnalysis(data.analysis)
       setVisibleSteps(1)
       setStatus('AI-analysen är klar med OpenAI Vision.')
+      onAnalysisComplete()
 
       if (selectedAssignment.id) {
         await saveAssignmentAnalysis(selectedAssignment, data.analysis)
