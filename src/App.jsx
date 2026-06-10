@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
 import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
+import Achievements from './components/Achievements.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
@@ -19,6 +20,7 @@ const storageKeys = {
   demoUsers: 'pluggarena.demoUsers',
   localAuth: 'pluggarena.localAuth',
   humorMode: 'pluggarena.humorMode',
+  achievementStats: 'pluggarena.achievementStats',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -37,6 +39,12 @@ const initialProgress = {
   streak: 0,
   username: '',
   xp: 320,
+}
+
+const initialAchievementStats = {
+  aiQuestions: 0,
+  analyzedAssignments: 0,
+  quizCompleted: 0,
 }
 
 const dailyQuizTarget = 5
@@ -158,6 +166,13 @@ function readSquad(user) {
 function writeSquad(user, name) {
   writeStoredValue(getScopedKey(storageKeys.squad, user), { name })
   writeStoredValue(storageKeys.squad, { name })
+}
+
+function readAchievementStats(user) {
+  const key = getScopedKey(storageKeys.achievementStats, user)
+  const stats = readStoredValue(key, initialAchievementStats)
+  writeStoredValue(key, stats)
+  return stats
 }
 
 function getLevel(xp) {
@@ -287,6 +302,7 @@ function App() {
     readStoredValue(storageKeys.humorMode, false),
   )
   const [assignmentsWaiting, setAssignmentsWaiting] = useState(0)
+  const [achievementStats, setAchievementStats] = useState(initialAchievementStats)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const todayKey = getTodayKey()
@@ -326,6 +342,7 @@ function App() {
           setUser(localUser)
           setProgress(readProgress(localUser))
           setSquad(readSquad(localUser))
+          setAchievementStats(readAchievementStats(localUser))
         }
 
         if (isMounted) {
@@ -351,6 +368,7 @@ function App() {
             setUser(sessionUser)
             setProgress(loadedData.progress)
             setSquad(loadedData.squad)
+            setAchievementStats(readAchievementStats(sessionUser))
             writeProgress(sessionUser, loadedData.progress)
             writeSquad(sessionUser, loadedData.squad)
           }
@@ -390,6 +408,7 @@ function App() {
           setUser(null)
           setProgress(initialProgress)
           setSquad('')
+          setAchievementStats(initialAchievementStats)
           return
         }
 
@@ -400,6 +419,7 @@ function App() {
             setUser(sessionUser)
             setProgress(loadedData.progress)
             setSquad(loadedData.squad)
+            setAchievementStats(readAchievementStats(sessionUser))
             writeProgress(sessionUser, loadedData.progress)
             writeSquad(sessionUser, loadedData.squad)
           }
@@ -447,7 +467,47 @@ function App() {
     setAssignmentsWaiting(
       items.filter((assignment) => !assignment.analysis).length,
     )
-  }, [])
+    const analyzedAssignments = items.filter(
+      (assignment) => assignment.analysis,
+    ).length
+
+    setAchievementStats((current) => {
+      const nextStats = {
+        ...current,
+        analyzedAssignments: Math.max(
+          current.analyzedAssignments,
+          analyzedAssignments,
+        ),
+      }
+
+      if (user) {
+        writeStoredValue(
+          getScopedKey(storageKeys.achievementStats, user),
+          nextStats,
+        )
+      }
+
+      return nextStats
+    })
+  }, [user])
+
+  function incrementAchievementStat(key) {
+    setAchievementStats((current) => {
+      const nextStats = {
+        ...current,
+        [key]: current[key] + 1,
+      }
+
+      if (user) {
+        writeStoredValue(
+          getScopedKey(storageKeys.achievementStats, user),
+          nextStats,
+        )
+      }
+
+      return nextStats
+    })
+  }
 
   useEffect(() => {
     if (activeView !== 'assignments' || !aiTarget) {
@@ -511,6 +571,7 @@ function App() {
       setUser(localUser)
       setProgress(nextProgress)
       setSquad(readSquad(localUser))
+      setAchievementStats(readAchievementStats(localUser))
       writeProgress(localUser, nextProgress)
       return
     }
@@ -548,6 +609,7 @@ function App() {
       username: loadedData.progress.username || username || email.split('@')[0],
     })
     setSquad(loadedData.squad)
+    setAchievementStats(readAchievementStats(nextUser))
   }
 
   async function handleLogout() {
@@ -563,6 +625,7 @@ function App() {
     setUser(null)
     setProgress(initialProgress)
     setSquad('')
+    setAchievementStats(initialAchievementStats)
   }
 
   function saveQuizResult(result) {
@@ -649,6 +712,10 @@ function App() {
     writeProgress(user, nextProgress)
     writeSquad(user, nextSquad)
     writeStoredValue(getScopedKey(storageKeys.quizResults, user), [])
+    writeStoredValue(
+      getScopedKey(storageKeys.achievementStats, user),
+      initialAchievementStats,
+    )
     writeStoredValue('pluggarena.battles', [])
     writeStoredValue('pluggarena.battleResults', [])
 
@@ -662,6 +729,7 @@ function App() {
     setSelectedSubject('Matematik')
     setActiveView('arena')
     setAssignmentsWaiting(0)
+    setAchievementStats(initialAchievementStats)
     setQuizCompletedToday(0)
     setHumorMode(false)
     writeStoredValue(storageKeys.humorMode, false)
@@ -739,6 +807,11 @@ function App() {
               onToggleHumor={toggleHumorMode}
               onUpload={() => openAiArea('assignment-upload')}
             />
+            <Achievements
+              stats={achievementStats}
+              streak={progress.streak}
+              xp={progress.xp}
+            />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
           </div>
         )}
@@ -754,6 +827,7 @@ function App() {
             <Quiz
               key={selectedSubject}
               onAnswerResult={handleAnswerResult}
+              onQuizComplete={() => incrementAchievementStat('quizCompleted')}
               questionBank={questionBank}
               selectedSubject={selectedSubject}
               subjects={subjects}
@@ -764,7 +838,11 @@ function App() {
 
         {activeView === 'trainer' && (
           <div className="tab-view trainer-view" id="trainer-panel" role="tabpanel">
-            <AIStudyBuddy humorMode={humorMode} standalone />
+            <AIStudyBuddy
+              humorMode={humorMode}
+              onQuestionAsked={() => incrementAchievementStat('aiQuestions')}
+              standalone
+            />
           </div>
         )}
 

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 function Quiz({
   onAnswerResult,
+  onQuizComplete,
   onSubjectChange,
   questionBank,
   selectedSubject,
@@ -41,6 +42,10 @@ function Quiz({
       setFeedback('Rätt! +100 XP')
     } else {
       setFeedback(`Fel. Rätt svar är ${currentQuestion.answer}.`)
+    }
+
+    if (questionIndex === questions.length - 1) {
+      onQuizComplete()
     }
 
     window.setTimeout(() => {

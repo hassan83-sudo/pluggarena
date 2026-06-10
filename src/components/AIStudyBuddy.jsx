@@ -10,6 +10,7 @@ function makeFallbackHint(question, subject, humorMode) {
 
 function AIStudyBuddy({
   humorMode = false,
+  onQuestionAsked = () => {},
   question,
   standalone = false,
   subject = 'Skolarbete',
@@ -32,6 +33,7 @@ function AIStudyBuddy({
       return
     }
 
+    onQuestionAsked()
     setIsLoading(true)
     setStatus('AI Study Buddy tänker...')
 
