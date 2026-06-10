@@ -26,6 +26,7 @@ const storageKeys = {
   achievementStats: 'pluggarena.achievementStats',
   dailyQuests: 'pluggarena.dailyQuests',
   levelProgress: 'pluggarena.levelProgress',
+  leaderboard: 'pluggarena.leaderboard',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -36,6 +37,13 @@ const defaultDemoUsers = [
   { name: 'Optical', xp: 980 },
   { name: 'Rana', xp: 760 },
   { name: 'admin', xp: 640 },
+]
+
+const defaultLeaderboardUsers = [
+  { name: 'Sara', xp: 280 },
+  { name: 'Adam', xp: 190 },
+  { name: 'Lina', xp: 120 },
+  { name: 'Omar', xp: 80 },
 ]
 
 const initialProgress = {
@@ -321,6 +329,9 @@ function App() {
   const [demoUsers, setDemoUsers] = useState(() =>
     readStoredValue(storageKeys.demoUsers, defaultDemoUsers),
   )
+  const [leaderboardUsers, setLeaderboardUsers] = useState(() =>
+    readStoredValue(storageKeys.leaderboard, defaultLeaderboardUsers),
+  )
   const [activeView, setActiveView] = useState('arena')
   const [aiTarget, setAiTarget] = useState('')
   const [humorMode, setHumorMode] = useState(() =>
@@ -343,7 +354,7 @@ function App() {
   const leaderboard = useMemo(
     () => [
       { name: progress.username, xp: progress.xp },
-      ...demoUsers,
+      ...leaderboardUsers,
     ].filter(
       (entry, index, entries) =>
         entries.findIndex(
@@ -352,7 +363,7 @@ function App() {
             entry.name.toLocaleLowerCase('sv-SE'),
         ) === index,
     ).sort((a, b) => b.xp - a.xp),
-    [demoUsers, progress.username, progress.xp],
+    [leaderboardUsers, progress.username, progress.xp],
   )
 
   useEffect(() => {
@@ -842,6 +853,7 @@ function App() {
 
     clearPluggArenaStorage()
     writeStoredValue(storageKeys.demoUsers, defaultDemoUsers)
+    writeStoredValue(storageKeys.leaderboard, defaultLeaderboardUsers)
     writeProgress(user, nextProgress)
     writeSquad(user, nextSquad)
     writeStoredValue(getScopedKey(storageKeys.quizResults, user), [])
@@ -868,6 +880,7 @@ function App() {
     setProgress(nextProgress)
     setSquad(nextSquad)
     setDemoUsers(defaultDemoUsers)
+    setLeaderboardUsers(defaultLeaderboardUsers)
     setSelectedSubject('Matematik')
     setActiveView('arena')
     setAssignmentsWaiting(0)

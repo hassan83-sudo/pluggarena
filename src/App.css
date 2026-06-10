@@ -1140,33 +1140,93 @@ summary {
 
 .leaderboard-list li {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 12px;
   align-items: center;
-  padding: 13px;
-  border-radius: 16px;
+  padding: 14px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.07);
 }
 
 .leaderboard-list .current-user {
-  background: linear-gradient(135deg, rgba(55, 229, 255, 0.18), rgba(168, 117, 255, 0.18));
+  border-color: rgba(141, 228, 255, 0.42);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.18), rgba(168, 117, 255, 0.18)),
+    rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 0 0 1px rgba(141, 228, 255, 0.08);
 }
 
-.leaderboard-list span {
+.leaderboard-rank {
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   border-radius: 999px;
   color: #0a1020;
-  background: #ffffff;
+  background: #dce6f8;
   font-weight: 1000;
+}
+
+.leaderboard-rank.rank-1 {
+  background: #ffd166;
+}
+
+.leaderboard-rank.rank-2 {
+  background: #cbd5e1;
+}
+
+.leaderboard-rank.rank-3 {
+  background: #d99a6c;
+}
+
+.leaderboard-player {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.leaderboard-player strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-player strong small {
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #07111f;
+  background: #8de4ff;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.leaderboard-player > span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .leaderboard-list em,
 .reward em {
   color: #8de4ff;
   font-style: normal;
+  font-weight: 900;
+}
+
+.leaderboard-list em {
+  white-space: nowrap;
+}
+
+.leaderboard-size {
+  padding: 8px 11px;
+  border: 1px solid rgba(168, 117, 255, 0.22);
+  border-radius: 999px;
+  color: #d8c8ff;
+  background: rgba(168, 117, 255, 0.09);
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -2543,5 +2603,15 @@ summary {
 
   .level-reward-list {
     grid-template-columns: 1fr;
+  }
+
+  .leaderboard-list li {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .leaderboard-list em {
+    font-size: 12px;
   }
 }
