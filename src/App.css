@@ -571,6 +571,98 @@
   color: #ffd166;
 }
 
+.study-plan-panel {
+  margin-bottom: 12px;
+  border-color: rgba(141, 228, 255, 0.26);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.11), rgba(168, 117, 255, 0.08) 68%, transparent),
+    var(--card-bg);
+}
+
+.study-plan-heading {
+  align-items: center;
+}
+
+.study-plan-duration {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid rgba(168, 117, 255, 0.24);
+  border-radius: 999px;
+  color: #d8c8ff;
+  background: rgba(168, 117, 255, 0.1);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.study-plan-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.study-plan-list li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.study-plan-list li > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 11px;
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  font-weight: 1000;
+}
+
+.study-plan-list li div {
+  display: grid;
+  gap: 5px;
+}
+
+.study-plan-list strong {
+  color: #8de4ff;
+}
+
+.study-plan-list p,
+.study-plan-empty p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.study-plan-empty {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px dashed rgba(141, 228, 255, 0.24);
+  border-radius: 18px;
+  background: rgba(141, 228, 255, 0.045);
+}
+
+.study-plan-empty strong {
+  color: var(--text-main);
+}
+
+.study-plan-button {
+  margin-top: 12px;
+  padding: 0 16px;
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+  box-shadow: 0 10px 24px rgba(55, 229, 255, 0.14);
+}
+
 .level-rewards-panel {
   margin-bottom: 12px;
   border-color: rgba(168, 117, 255, 0.3);
@@ -2745,6 +2837,18 @@ summary {
 
   .daily-quest-list {
     grid-template-columns: 1fr;
+  }
+
+  .study-plan-heading {
+    align-items: flex-start;
+  }
+
+  .study-plan-list {
+    grid-template-columns: 1fr;
+  }
+
+  .study-plan-button {
+    width: 100%;
   }
 
   .level-rewards-heading {

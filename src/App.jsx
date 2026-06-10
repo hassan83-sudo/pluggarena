@@ -16,6 +16,7 @@ import Progress from './components/Progress.jsx'
 import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
+import StudyPlan from './components/StudyPlan.jsx'
 import { questionBank, subjects } from './data/questions.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 import { getLevelProgress } from './lib/levels.js'
@@ -995,6 +996,14 @@ function App() {
               xp={progress.xp}
             />
             <DailyQuests quests={dailyQuests} />
+            <StudyPlan
+              assignmentsWaiting={assignmentsWaiting}
+              key={user.id}
+              nextLevelXp={nextLevelXp}
+              quizRemaining={quizRemaining}
+              streak={progress.streak}
+              userId={user.id}
+            />
             <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
             <FriendsPanel friends={friends} onChallenge={challengeFriend} />
