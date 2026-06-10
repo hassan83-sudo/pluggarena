@@ -7,6 +7,7 @@ import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
+import FriendsPanel from './components/FriendsPanel.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import LevelRewards from './components/LevelRewards.jsx'
 import Login from './components/Login.jsx'
@@ -27,6 +28,8 @@ const storageKeys = {
   dailyQuests: 'pluggarena.dailyQuests',
   levelProgress: 'pluggarena.levelProgress',
   leaderboard: 'pluggarena.leaderboard',
+  friends: 'pluggarena.friends',
+  lastFriendChallenge: 'pluggarena.lastFriendChallenge',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -44,6 +47,12 @@ const defaultLeaderboardUsers = [
   { name: 'Adam', xp: 190 },
   { name: 'Lina', xp: 120 },
   { name: 'Omar', xp: 80 },
+]
+
+const defaultFriends = [
+  { name: 'Sara', status: 'online', xp: 280 },
+  { name: 'Adam', status: 'studying', xp: 190 },
+  { name: 'Lina', status: 'offline', xp: 120 },
 ]
 
 const initialProgress = {
@@ -331,6 +340,9 @@ function App() {
   )
   const [leaderboardUsers, setLeaderboardUsers] = useState(() =>
     readStoredValue(storageKeys.leaderboard, defaultLeaderboardUsers),
+  )
+  const [friends, setFriends] = useState(() =>
+    readStoredValue(storageKeys.friends, defaultFriends),
   )
   const [activeView, setActiveView] = useState('arena')
   const [aiTarget, setAiTarget] = useState('')
@@ -844,6 +856,16 @@ function App() {
     recordDailyQuestProgress({ xpEarned: xp })
   }
 
+  function challengeFriend(friend) {
+    writeStoredValue(
+      getScopedKey(storageKeys.lastFriendChallenge, user),
+      {
+        friendName: friend.name,
+        sentAt: new Date().toISOString(),
+      },
+    )
+  }
+
   function resetDemoData() {
     const nextProgress = {
       ...initialProgress,
@@ -854,6 +876,7 @@ function App() {
     clearPluggArenaStorage()
     writeStoredValue(storageKeys.demoUsers, defaultDemoUsers)
     writeStoredValue(storageKeys.leaderboard, defaultLeaderboardUsers)
+    writeStoredValue(storageKeys.friends, defaultFriends)
     writeProgress(user, nextProgress)
     writeSquad(user, nextSquad)
     writeStoredValue(getScopedKey(storageKeys.quizResults, user), [])
@@ -881,6 +904,7 @@ function App() {
     setSquad(nextSquad)
     setDemoUsers(defaultDemoUsers)
     setLeaderboardUsers(defaultLeaderboardUsers)
+    setFriends(defaultFriends)
     setSelectedSubject('Matematik')
     setActiveView('arena')
     setAssignmentsWaiting(0)
@@ -972,6 +996,7 @@ function App() {
             <DailyQuests quests={dailyQuests} />
             <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
+            <FriendsPanel friends={friends} onChallenge={challengeFriend} />
           </div>
         )}
 
