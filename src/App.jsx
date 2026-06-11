@@ -19,6 +19,7 @@ import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import WeeklyReport from './components/WeeklyReport.jsx'
+import XPShop from './components/XPShop.jsx'
 import { questionBank, subjects } from './data/questions.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 import { getLevelProgress } from './lib/levels.js'
@@ -388,6 +389,7 @@ function App() {
   const [levelNotice, setLevelNotice] = useState(null)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
+  const [shopResetVersion, setShopResetVersion] = useState(0)
   const todayKey = getTodayKey()
   const level = getLevel(progress.xp)
   const hasClaimedToday = progress.lastRewardDate === todayKey
@@ -930,6 +932,18 @@ function App() {
     recordWeeklyActivity({ xpEarned: xp })
   }
 
+  function purchaseShopItem(item) {
+    if (progress.xp < item.price) {
+      return false
+    }
+
+    persistProgress({
+      ...progress,
+      xp: progress.xp - item.price,
+    })
+    return true
+  }
+
   function challengeFriend(friend) {
     writeStoredValue(
       getScopedKey(storageKeys.lastFriendChallenge, user),
@@ -989,6 +1003,7 @@ function App() {
     setActiveView('arena')
     setAssignmentsWaiting(0)
     setAchievementStats(initialAchievementStats)
+    setShopResetVersion((version) => version + 1)
     setDailyQuests(nextDailyQuests)
     setWeeklyActivity(nextWeeklyActivity)
     setLevelNotice(null)
@@ -1076,6 +1091,12 @@ function App() {
               streak={progress.streak}
               userId={user.id}
               weeklyActivity={weeklyActivity}
+            />
+            <XPShop
+              key={`${user.id}-${shopResetVersion}`}
+              onPurchase={purchaseShopItem}
+              userId={user.id}
+              xp={progress.xp}
             />
             <Achievements
               stats={achievementStats}
