@@ -6,6 +6,7 @@ import AICoach from './components/AICoach.jsx'
 import Achievements from './components/Achievements.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
+import Classroom from './components/Classroom.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
 import FriendsPanel from './components/FriendsPanel.jsx'
@@ -112,6 +113,7 @@ const navigationItems = [
   { icon: '✦', id: 'trainer', label: 'Tränare' },
   { icon: '⚔', id: 'battle', label: 'Utmaningar' },
   { icon: '▤', id: 'assignments', label: 'Uppgifter' },
+  { icon: '◇', id: 'classroom', label: 'Klassrum' },
   { icon: 'P', id: 'profile', label: 'Profil' },
 ]
 
@@ -946,6 +948,15 @@ function App() {
     return true
   }
 
+  function awardClassroomBonus() {
+    persistProgress({
+      ...progress,
+      xp: progress.xp + 50,
+    })
+    recordDailyQuestProgress({ xpEarned: 50 })
+    recordWeeklyActivity({ xpEarned: 50 })
+  }
+
   function challengeFriend(friend) {
     writeStoredValue(
       getScopedKey(storageKeys.lastFriendChallenge, user),
@@ -1205,6 +1216,19 @@ function App() {
               userId={user.id}
               username={progress.username}
               xp={progress.xp}
+            />
+          </div>
+        )}
+
+        {activeView === 'classroom' && (
+          <div
+            className="tab-view classroom-view"
+            id="classroom-panel"
+            role="tabpanel"
+          >
+            <Classroom
+              onFirstJoinBonus={awardClassroomBonus}
+              userId={user.id}
             />
           </div>
         )}

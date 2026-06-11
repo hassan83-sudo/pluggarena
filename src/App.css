@@ -1510,6 +1510,182 @@
   color: var(--text-main);
 }
 
+.classroom-page {
+  display: grid;
+  gap: 12px;
+}
+
+.classroom-header-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  border-color: rgba(141, 228, 255, 0.32);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(168, 117, 255, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(55, 229, 255, 0.12), rgba(168, 117, 255, 0.09) 70%, transparent),
+    var(--card-bg);
+}
+
+.classroom-header-panel h2 {
+  margin-top: 3px;
+  font-size: 32px;
+}
+
+.classroom-header-panel > div:first-child > p:last-child {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.classroom-membership-count {
+  display: grid;
+  min-width: 116px;
+  padding: 12px 16px;
+  border: 1px solid rgba(141, 228, 255, 0.24);
+  border-radius: 18px;
+  background: rgba(55, 229, 255, 0.08);
+  text-align: center;
+}
+
+.classroom-membership-count span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.classroom-membership-count strong {
+  margin-top: 3px;
+  color: #8de4ff;
+  font-size: 28px;
+}
+
+.classroom-message {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(141, 228, 255, 0.28);
+  border-radius: 16px;
+  color: #dff8ff;
+  background: rgba(55, 229, 255, 0.08);
+  font-weight: 800;
+}
+
+.classroom-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.classroom-group {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 13px;
+  align-items: center;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(168, 117, 255, 0.22);
+  border-radius: 22px;
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.06), rgba(168, 117, 255, 0.07)),
+    var(--card-bg);
+}
+
+.classroom-group.joined {
+  border-color: rgba(141, 228, 255, 0.42);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.13), rgba(168, 117, 255, 0.11)),
+    var(--card-bg);
+}
+
+.classroom-group-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(55, 229, 255, 0.17), rgba(168, 117, 255, 0.21));
+  font-size: 27px;
+}
+
+.classroom-group-copy {
+  min-width: 0;
+}
+
+.classroom-group-copy > span {
+  color: #8de4ff;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.classroom-group-copy h3 {
+  margin-top: 4px;
+  font-size: 20px;
+}
+
+.classroom-group-copy p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.classroom-group button {
+  min-width: 86px;
+  padding: 0 13px;
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+}
+
+.classroom-group button.leave {
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.classroom-bonus-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: rgba(168, 117, 255, 0.28);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.09), rgba(168, 117, 255, 0.11)),
+    var(--card-bg);
+}
+
+.classroom-bonus-panel > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.classroom-bonus-panel > div > span {
+  display: grid;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 16px;
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.classroom-bonus-panel strong {
+  color: var(--text-main);
+}
+
+.classroom-bonus-panel p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.classroom-bonus-panel > strong {
+  flex: 0 0 auto;
+  color: #8de4ff;
+}
+
 .buddy-main-panel {
   margin-bottom: 12px;
   border-color: rgba(141, 228, 255, 0.3);
@@ -2874,6 +3050,10 @@ summary {
   .profile-owned-items {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .classroom-group-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3031,6 +3211,41 @@ summary {
   .profile-latest-battle > div:last-child {
     justify-items: start;
     text-align: left;
+  }
+
+  .classroom-header-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .classroom-header-panel h2 {
+    font-size: 26px;
+  }
+
+  .classroom-membership-count {
+    min-width: 92px;
+    padding: 10px;
+  }
+
+  .classroom-group {
+    grid-template-columns: 46px minmax(0, 1fr);
+  }
+
+  .classroom-group-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    font-size: 23px;
+  }
+
+  .classroom-group button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .classroom-bonus-panel {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .arena-status-card {
