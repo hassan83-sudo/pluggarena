@@ -73,6 +73,7 @@ const initialProgress = {
 const initialAchievementStats = {
   aiQuestions: 0,
   analyzedAssignments: 0,
+  classroomMaster: 0,
   quizCompleted: 0,
 }
 
@@ -658,6 +659,28 @@ function App() {
     })
   }
 
+  const unlockClassroomMaster = useCallback(() => {
+    setAchievementStats((current) => {
+      if (current.classroomMaster >= 1) {
+        return current
+      }
+
+      const nextStats = {
+        ...current,
+        classroomMaster: 1,
+      }
+
+      if (user) {
+        writeStoredValue(
+          getScopedKey(storageKeys.achievementStats, user),
+          nextStats,
+        )
+      }
+
+      return nextStats
+    })
+  }, [user])
+
   function addXp(amount) {
     setProgress((current) => {
       const nextProgress = {
@@ -1228,7 +1251,10 @@ function App() {
           >
             <Classroom
               onFirstJoinBonus={awardClassroomBonus}
+              onUnlockClassMaster={unlockClassroomMaster}
               userId={user.id}
+              username={progress.username}
+              xp={progress.xp}
             />
           </div>
         )}

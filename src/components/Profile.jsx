@@ -3,6 +3,7 @@ import { getLevelProgress } from '../lib/levels.js'
 const achievementTargets = {
   aiQuestions: 25,
   analyzedAssignments: 10,
+  classroomMaster: 1,
   quizCompleted: 1,
   streak: 7,
   xp: 1000,
@@ -44,6 +45,7 @@ function getAchievementCount(userId, streak, xp) {
   const values = {
     aiQuestions: stats.aiQuestions || 0,
     analyzedAssignments: stats.analyzedAssignments || 0,
+    classroomMaster: stats.classroomMaster || 0,
     quizCompleted: stats.quizCompleted || 0,
     streak,
     xp,
@@ -140,7 +142,7 @@ function Profile({ streak, userId, username, xp }) {
         </article>
         <article>
           <span>Achievements</span>
-          <strong>{achievementCount} / 5</strong>
+          <strong>{achievementCount} / 6</strong>
           <small>Upplåsta prestationer</small>
         </article>
       </section>

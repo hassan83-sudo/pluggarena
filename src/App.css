@@ -1577,10 +1577,6 @@
 }
 
 .classroom-group {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) auto;
-  gap: 13px;
-  align-items: center;
   min-width: 0;
   padding: 16px;
   border: 1px solid rgba(168, 117, 255, 0.22);
@@ -1588,6 +1584,13 @@
   background:
     linear-gradient(145deg, rgba(55, 229, 255, 0.06), rgba(168, 117, 255, 0.07)),
     var(--card-bg);
+}
+
+.classroom-group-summary {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 13px;
+  align-items: center;
 }
 
 .classroom-group.joined {
@@ -1639,6 +1642,124 @@
 .classroom-group button.leave {
   color: #dce6f8;
   background: rgba(255, 255, 255, 0.09);
+}
+
+.classroom-ranking {
+  display: grid;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(141, 228, 255, 0.16);
+}
+
+.classroom-ranking-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.classroom-ranking-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.classroom-ranking-heading > div:first-child span {
+  font-size: 18px;
+}
+
+.classroom-ranking-heading > div:last-child {
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+}
+
+.classroom-ranking-heading > div:last-child span {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.classroom-ranking-heading strong {
+  color: var(--text-main);
+}
+
+.classroom-ranking-heading > div:last-child strong {
+  color: #8de4ff;
+  font-size: 13px;
+}
+
+.classroom-ranking ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.classroom-ranking li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto auto;
+  gap: 7px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 13px;
+  background: rgba(7, 17, 31, 0.42);
+}
+
+.classroom-ranking li.current-user {
+  border: 1px solid rgba(141, 228, 255, 0.36);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.14), rgba(168, 117, 255, 0.12)),
+    rgba(7, 17, 31, 0.42);
+}
+
+.classroom-ranking li > span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 9px;
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.classroom-ranking li > strong {
+  overflow: hidden;
+  color: var(--text-main);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.classroom-ranking li small {
+  padding: 4px 6px;
+  border-radius: 999px;
+  color: #07111f;
+  background: #8de4ff;
+  font-size: 9px;
+  font-weight: 1000;
+}
+
+.classroom-ranking li em {
+  color: #d8c8ff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.classroom-ranking > p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.classroom-ranking > p strong,
+.classroom-ranking > p span {
+  color: #8de4ff;
 }
 
 .classroom-bonus-panel {
@@ -3227,7 +3348,7 @@ summary {
     padding: 10px;
   }
 
-  .classroom-group {
+  .classroom-group-summary {
     grid-template-columns: 46px minmax(0, 1fr);
   }
 
@@ -3238,9 +3359,27 @@ summary {
     font-size: 23px;
   }
 
-  .classroom-group button {
+  .classroom-group-summary button {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .classroom-ranking-heading {
+    align-items: flex-start;
+  }
+
+  .classroom-ranking li {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+  }
+
+  .classroom-ranking li small {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .classroom-ranking li em {
+    grid-column: 3;
+    grid-row: 1 / span 2;
   }
 
   .classroom-bonus-panel {

@@ -39,6 +39,14 @@ const achievementDefinitions = [
     value: ({ aiQuestions }) => aiQuestions,
     target: 25,
   },
+  {
+    description: 'Nå förstaplatsen i en studiegrupp.',
+    icon: '👑',
+    key: 'class-master',
+    title: 'Klassmästare',
+    value: ({ classroomMaster }) => classroomMaster,
+    target: 1,
+  },
 ]
 
 function Achievements({ stats, streak, xp }) {

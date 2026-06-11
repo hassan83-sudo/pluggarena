@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const studyGroups = [
   {
@@ -25,6 +25,13 @@ const studyGroups = [
     members: 20,
     name: 'Svenska',
   },
+]
+
+const mockStudents = [
+  { name: 'Elev 1', xp: 280 },
+  { name: 'Elev 2', xp: 190 },
+  { name: 'Elev 3', xp: 120 },
+  { name: 'Elev 4', xp: 80 },
 ]
 
 function getMembershipKey(userId) {
@@ -73,7 +80,28 @@ function saveBonusClaimed(userId) {
   }
 }
 
-function Classroom({ onFirstJoinBonus, userId }) {
+function buildRanking(username, xp) {
+  return [
+    { isCurrentUser: true, name: username, xp },
+    ...mockStudents.map((student) => ({
+      ...student,
+      isCurrentUser: false,
+    })),
+  ]
+    .sort((a, b) => b.xp - a.xp || a.name.localeCompare(b.name, 'sv-SE'))
+    .map((student, index) => ({
+      ...student,
+      rank: index + 1,
+    }))
+}
+
+function Classroom({
+  onFirstJoinBonus,
+  onUnlockClassMaster,
+  userId,
+  username,
+  xp,
+}) {
   const [memberships, setMemberships] = useState(() =>
     readMemberships(userId),
   )
@@ -81,6 +109,15 @@ function Classroom({ onFirstJoinBonus, userId }) {
     hasReceivedBonus(userId),
   )
   const [message, setMessage] = useState('')
+  const ranking = buildRanking(username, xp)
+  const currentUserRank = ranking.find((student) => student.isCurrentUser)?.rank
+  const groupXp = ranking.reduce((total, student) => total + student.xp, 0)
+
+  useEffect(() => {
+    if (memberships.length > 0 && currentUserRank === 1) {
+      onUnlockClassMaster()
+    }
+  }, [currentUserRank, memberships.length, onUnlockClassMaster])
 
   function joinGroup(group) {
     if (memberships.includes(group.id)) {
@@ -141,23 +178,61 @@ function Classroom({ onFirstJoinBonus, userId }) {
               className={isMember ? 'classroom-group joined' : 'classroom-group'}
               key={group.id}
             >
-              <div className="classroom-group-icon" aria-hidden="true">
-                {group.icon}
+              <div className="classroom-group-summary">
+                <div className="classroom-group-icon" aria-hidden="true">
+                  {group.icon}
+                </div>
+                <div className="classroom-group-copy">
+                  <span>{isMember ? 'Medlem' : 'Öppen grupp'}</span>
+                  <h3>{group.name}</h3>
+                  <p>{group.members + (isMember ? 1 : 0)} medlemmar</p>
+                </div>
+                <button
+                  className={isMember ? 'leave' : ''}
+                  onClick={() => (
+                    isMember ? leaveGroup(group) : joinGroup(group)
+                  )}
+                  type="button"
+                >
+                  {isMember ? 'Lämna' : 'Gå med'}
+                </button>
               </div>
-              <div className="classroom-group-copy">
-                <span>{isMember ? 'Medlem' : 'Öppen grupp'}</span>
-                <h3>{group.name}</h3>
-                <p>{group.members + (isMember ? 1 : 0)} medlemmar</p>
-              </div>
-              <button
-                className={isMember ? 'leave' : ''}
-                onClick={() => (
-                  isMember ? leaveGroup(group) : joinGroup(group)
-                )}
-                type="button"
-              >
-                {isMember ? 'Lämna' : 'Gå med'}
-              </button>
+
+              {isMember && (
+                <div className="classroom-ranking">
+                  <div className="classroom-ranking-heading">
+                    <div>
+                      <span aria-hidden="true">🏆</span>
+                      <strong>Topp 5 elever</strong>
+                    </div>
+                    <div>
+                      <span>Gruppens XP</span>
+                      <strong>{groupXp} XP</strong>
+                    </div>
+                  </div>
+
+                  <ol>
+                    {ranking.map((student) => (
+                      <li
+                        className={student.isCurrentUser ? 'current-user' : ''}
+                        key={student.name}
+                      >
+                        <span>{student.rank}</span>
+                        <strong>{student.name}</strong>
+                        {student.isCurrentUser && <small>Du</small>}
+                        <em>{student.xp} XP</em>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <p>
+                    Din placering: <strong>#{currentUserRank}</strong>
+                    {currentUserRank === 1 && (
+                      <span> 👑 Klassmästare</span>
+                    )}
+                  </p>
+                </div>
+              )}
             </article>
           )
         })}
