@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
 import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
+import AICoach from './components/AICoach.jsx'
 import Achievements from './components/Achievements.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
 import BattleMode from './components/BattleMode.jsx'
@@ -1067,6 +1068,14 @@ function App() {
               onExplain={() => setActiveView('trainer')}
               onToggleHumor={toggleHumorMode}
               onUpload={() => openAiArea('assignment-upload')}
+            />
+            <AICoach
+              dailyQuests={dailyQuests}
+              nextLevelXp={nextLevelXp}
+              stats={achievementStats}
+              streak={progress.streak}
+              userId={user.id}
+              weeklyActivity={weeklyActivity}
             />
             <Achievements
               stats={achievementStats}
