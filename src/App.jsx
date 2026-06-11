@@ -14,6 +14,7 @@ import LevelRewards from './components/LevelRewards.jsx'
 import Login from './components/Login.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
 import Progress from './components/Progress.jsx'
+import Profile from './components/Profile.jsx'
 import Quiz from './components/Quiz.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
@@ -111,6 +112,7 @@ const navigationItems = [
   { icon: '✦', id: 'trainer', label: 'Tränare' },
   { icon: '⚔', id: 'battle', label: 'Utmaningar' },
   { icon: '▤', id: 'assignments', label: 'Uppgifter' },
+  { icon: 'P', id: 'profile', label: 'Profil' },
 ]
 
 function getUserKey(user) {
@@ -1191,6 +1193,18 @@ function App() {
               questionBank={questionBank}
               subjects={subjects}
               user={{ id: user.id, name: progress.username }}
+            />
+          </div>
+        )}
+
+        {activeView === 'profile' && (
+          <div className="tab-view profile-view" id="profile-panel" role="tabpanel">
+            <Profile
+              key={`${user.id}-${progress.xp}-${progress.streak}`}
+              streak={progress.streak}
+              userId={user.id}
+              username={progress.username}
+              xp={progress.xp}
             />
           </div>
         )}
