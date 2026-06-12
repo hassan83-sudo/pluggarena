@@ -10,6 +10,7 @@ import BattleMode from './components/BattleMode.jsx'
 import Classroom from './components/Classroom.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
+import ExamTraining from './components/ExamTraining.jsx'
 import FocusMode from './components/FocusMode.jsx'
 import FriendsPanel from './components/FriendsPanel.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
@@ -137,6 +138,7 @@ const rewardGoalXp = 5000
 const navigationItems = [
   { icon: '⌂', id: 'arena', label: 'Hem' },
   { icon: '▥', id: 'analysis', label: 'Analys' },
+  { icon: '✓', id: 'exam', label: 'Provträning' },
   { icon: '✦', id: 'trainer', label: 'Tränare' },
   { icon: '⚔', id: 'battle', label: 'Utmaningar' },
   { icon: '▤', id: 'assignments', label: 'Uppgifter' },
@@ -1110,6 +1112,13 @@ function App() {
     recordWeeklyActivity({ xpEarned: xp })
   }
 
+  function awardExamXp(xp) {
+    addXp(xp)
+    recordDailyQuestProgress({ quizCompleted: 1, xpEarned: xp })
+    recordWeeklyActivity({ quizCompleted: 1, xpEarned: xp })
+    incrementAchievementStat('quizCompleted')
+  }
+
   function challengeFriend(friend) {
     writeStoredValue(
       getScopedKey(storageKeys.lastFriendChallenge, user),
@@ -1335,6 +1344,17 @@ function App() {
               selectedSubject={selectedSubject}
               subjects={subjects}
               onSubjectChange={setSelectedSubject}
+            />
+          </div>
+        )}
+
+        {activeView === 'exam' && (
+          <div className="tab-view exam-view" id="exam-panel" role="tabpanel">
+            <ExamTraining
+              onComplete={awardExamXp}
+              questionBank={questionBank}
+              subjects={subjects}
+              userId={user.id}
             />
           </div>
         )}
