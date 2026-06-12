@@ -24,6 +24,7 @@ import Reminders from './components/Reminders.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
+import StudyCalendar from './components/StudyCalendar.jsx'
 import WeeklyReport from './components/WeeklyReport.jsx'
 import XPShop from './components/XPShop.jsx'
 import { questionBank, subjects } from './data/questions.js'
@@ -139,6 +140,7 @@ const navigationItems = [
   { icon: '✦', id: 'trainer', label: 'Tränare' },
   { icon: '⚔', id: 'battle', label: 'Utmaningar' },
   { icon: '▤', id: 'assignments', label: 'Uppgifter' },
+  { icon: '□', id: 'calendar', label: 'Kalender' },
   { icon: '◇', id: 'classroom', label: 'Klassrum' },
   { icon: 'P', id: 'profile', label: 'Profil' },
 ]
@@ -1407,6 +1409,15 @@ function App() {
               userId={user.id}
               username={progress.username}
               xp={progress.xp}
+            />
+          </div>
+        )}
+
+        {activeView === 'calendar' && (
+          <div className="tab-view calendar-view" id="calendar-panel" role="tabpanel">
+            <StudyCalendar
+              key={`${user.id}-${shopResetVersion}`}
+              userId={user.id}
             />
           </div>
         )}
