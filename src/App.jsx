@@ -5,6 +5,7 @@ import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
 import AICoach from './components/AICoach.jsx'
 import Achievements from './components/Achievements.jsx'
 import AssignmentUpload from './components/AssignmentUpload.jsx'
+import ArenaSeason from './components/ArenaSeason.jsx'
 import BattleMode from './components/BattleMode.jsx'
 import Classroom from './components/Classroom.jsx'
 import Dashboard from './components/Dashboard.jsx'
@@ -1292,6 +1293,11 @@ function App() {
               weekKey={weeklyActivity.weekKey}
             />
             <MonthlyOverview activity={monthlyActivity} />
+            <ArenaSeason
+              seasonXp={monthlyActivity.xpEarned}
+              userId={user.id}
+              username={progress.username}
+            />
             <Reminders
               key={`${user.id}-${shopResetVersion}`}
               userId={user.id}
