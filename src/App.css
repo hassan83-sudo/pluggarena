@@ -931,6 +931,176 @@
   font-size: 11px;
 }
 
+.focus-mode-panel {
+  margin-bottom: 12px;
+  border-color: rgba(141, 228, 255, 0.3);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(168, 117, 255, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(55, 229, 255, 0.1), rgba(168, 117, 255, 0.09) 70%, transparent),
+    var(--card-bg);
+}
+
+.focus-mode-heading {
+  align-items: center;
+}
+
+.focus-status {
+  padding: 8px 11px;
+  border: 1px solid rgba(168, 117, 255, 0.22);
+  border-radius: 999px;
+  color: #d8c8ff;
+  background: rgba(168, 117, 255, 0.09);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.focus-status.active {
+  border-color: rgba(141, 228, 255, 0.36);
+  color: #8de4ff;
+  background: rgba(55, 229, 255, 0.1);
+}
+
+.focus-mode-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+}
+
+.focus-timer {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 178px;
+  padding: 18px;
+  border: 1px solid rgba(141, 228, 255, 0.2);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle, rgba(55, 229, 255, 0.11), transparent 68%),
+    rgba(7, 17, 31, 0.44);
+  text-align: center;
+}
+
+.focus-timer > span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.focus-timer > strong {
+  margin-top: 7px;
+  color: var(--text-main);
+  font-size: clamp(42px, 6vw, 62px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.focus-timer p {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.focus-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.focus-options button {
+  display: grid;
+  gap: 5px;
+  align-content: center;
+  min-height: 84px;
+  padding: 13px;
+  border: 1px solid rgba(168, 117, 255, 0.2);
+  color: var(--text-main);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.1), rgba(168, 117, 255, 0.11)),
+    rgba(7, 17, 31, 0.4);
+}
+
+.focus-options button:hover:not(:disabled) {
+  border-color: rgba(141, 228, 255, 0.48);
+  transform: translateY(-1px);
+}
+
+.focus-options button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.focus-options strong {
+  font-size: 19px;
+}
+
+.focus-options span {
+  color: #8de4ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.focus-session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.focus-pause-button,
+.focus-stop-button {
+  padding: 0 15px;
+}
+
+.focus-pause-button {
+  color: #07111f;
+  background: linear-gradient(135deg, #37e5ff, #a875ff);
+}
+
+.focus-stop-button {
+  color: #ffcad3;
+  background: rgba(255, 77, 109, 0.12);
+}
+
+.focus-message {
+  margin: 10px 0 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(141, 228, 255, 0.25);
+  border-radius: 15px;
+  color: #dff8ff;
+  background: rgba(55, 229, 255, 0.07);
+  font-weight: 800;
+}
+
+.focus-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.focus-stats article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(7, 17, 31, 0.38);
+}
+
+.focus-stats span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.focus-stats strong {
+  color: #d8c8ff;
+}
+
 .weekly-report-heading {
   align-items: center;
 }
@@ -3447,6 +3617,10 @@ summary {
   .reminders-form button {
     grid-column: 1 / -1;
   }
+
+  .focus-mode-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3678,6 +3852,25 @@ summary {
 
   .reminders-form button {
     grid-column: auto;
+    width: 100%;
+  }
+
+  .focus-mode-heading {
+    align-items: flex-start;
+  }
+
+  .focus-options,
+  .focus-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .focus-session-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .focus-pause-button,
+  .focus-stop-button {
     width: 100%;
   }
 

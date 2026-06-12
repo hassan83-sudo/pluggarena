@@ -9,6 +9,7 @@ import BattleMode from './components/BattleMode.jsx'
 import Classroom from './components/Classroom.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
+import FocusMode from './components/FocusMode.jsx'
 import FriendsPanel from './components/FriendsPanel.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import LevelRewards from './components/LevelRewards.jsx'
@@ -1100,6 +1101,12 @@ function App() {
     recordWeeklyActivity({ xpEarned: 50 })
   }
 
+  function awardFocusXp(xp) {
+    addXp(xp)
+    recordDailyQuestProgress({ xpEarned: xp })
+    recordWeeklyActivity({ xpEarned: xp })
+  }
+
   function challengeFriend(friend) {
     writeStoredValue(
       getScopedKey(storageKeys.lastFriendChallenge, user),
@@ -1287,6 +1294,11 @@ function App() {
             <MonthlyOverview activity={monthlyActivity} />
             <Reminders
               key={`${user.id}-${shopResetVersion}`}
+              userId={user.id}
+            />
+            <FocusMode
+              key={`${user.id}-${shopResetVersion}`}
+              onComplete={awardFocusXp}
               userId={user.id}
             />
             <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
