@@ -13,10 +13,12 @@ import FriendsPanel from './components/FriendsPanel.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
 import LevelRewards from './components/LevelRewards.jsx'
 import Login from './components/Login.jsx'
+import MonthlyOverview from './components/MonthlyOverview.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
 import Progress from './components/Progress.jsx'
 import Profile from './components/Profile.jsx'
 import Quiz from './components/Quiz.jsx'
+import Reminders from './components/Reminders.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
@@ -37,6 +39,7 @@ const storageKeys = {
   friends: 'pluggarena.friends',
   lastFriendChallenge: 'pluggarena.lastFriendChallenge',
   weeklyActivity: 'pluggarena.weeklyActivity',
+  monthlyActivity: 'pluggarena.monthlyActivity',
   progress: 'pluggarena.progress',
   quizResults: 'pluggarena.quizResults',
   squad: 'pluggarena.squad',
@@ -102,6 +105,26 @@ function createInitialWeeklyActivity(weekKey = getWeekKey()) {
     analyzedAssignments: 0,
     quizCompleted: 0,
     weekKey,
+    xpEarned: 0,
+  }
+}
+
+function getMonthKey(date = new Date()) {
+  return date.toISOString().slice(0, 7)
+}
+
+function createInitialMonthlyActivity(
+  monthKey = getMonthKey(),
+  highestLevel = 0,
+) {
+  return {
+    aiQuestions: 0,
+    analyzedAssignments: 0,
+    highestLevel,
+    highestStreak: 0,
+    levelsAchieved: 0,
+    monthKey,
+    quizCompleted: 0,
     xpEarned: 0,
   }
 }
@@ -253,6 +276,17 @@ function readWeeklyActivity(user) {
   return activity
 }
 
+function readMonthlyActivity(user, highestLevel = 0) {
+  const monthKey = getMonthKey()
+  const key = `${getScopedKey(storageKeys.monthlyActivity, user)}.${monthKey}`
+  const activity = readStoredValue(
+    key,
+    createInitialMonthlyActivity(monthKey, highestLevel),
+  )
+  writeStoredValue(key, activity)
+  return activity
+}
+
 function getLevel(xp) {
   if (xp >= 1000) {
     return 'Genius'
@@ -390,6 +424,9 @@ function App() {
   const [dailyQuests, setDailyQuests] = useState(createInitialDailyQuests)
   const [weeklyActivity, setWeeklyActivity] = useState(
     createInitialWeeklyActivity,
+  )
+  const [monthlyActivity, setMonthlyActivity] = useState(
+    createInitialMonthlyActivity,
   )
   const [levelNotice, setLevelNotice] = useState(null)
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
@@ -579,6 +616,65 @@ function App() {
     }
 
     let isCancelled = false
+    const storedProgress = readProgress(user)
+    const currentLevel = getLevelProgress(storedProgress.xp).currentLevel
+
+    queueMicrotask(() => {
+      if (!isCancelled) {
+        setMonthlyActivity(readMonthlyActivity(user, currentLevel))
+      }
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (!user) {
+      return undefined
+    }
+
+    let isCancelled = false
+    const currentLevel = getLevelProgress(progress.xp).currentLevel
+    const monthKey = getMonthKey()
+    const key = `${getScopedKey(storageKeys.monthlyActivity, user)}.${monthKey}`
+
+    queueMicrotask(() => {
+      if (isCancelled) {
+        return
+      }
+
+      setMonthlyActivity((current) => {
+        const levelIncrease = Math.max(currentLevel - current.highestLevel, 0)
+        const highestStreak = Math.max(current.highestStreak, progress.streak)
+
+        if (levelIncrease === 0 && highestStreak === current.highestStreak) {
+          return current
+        }
+
+        const nextActivity = {
+          ...current,
+          highestLevel: Math.max(current.highestLevel, currentLevel),
+          highestStreak,
+          levelsAchieved: current.levelsAchieved + levelIncrease,
+        }
+        writeStoredValue(key, nextActivity)
+        return nextActivity
+      })
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [progress.streak, progress.xp, user])
+
+  useEffect(() => {
+    if (!user) {
+      return undefined
+    }
+
+    let isCancelled = false
     const currentLevel = getLevelProgress(progress.xp).currentLevel
     const key = getScopedKey(storageKeys.levelProgress, user)
     const stored = readStoredValue(key, null)
@@ -757,6 +853,30 @@ function App() {
 
     writeStoredValue(key, nextActivity)
     setWeeklyActivity(nextActivity)
+    recordMonthlyActivity(changes)
+  }
+
+  function recordMonthlyActivity(changes) {
+    if (!user) {
+      return
+    }
+
+    const monthKey = getMonthKey()
+    const key = `${getScopedKey(storageKeys.monthlyActivity, user)}.${monthKey}`
+
+    setMonthlyActivity((current) => {
+      const nextActivity = {
+        ...current,
+        aiQuestions: current.aiQuestions + (changes.aiQuestions || 0),
+        analyzedAssignments:
+          current.analyzedAssignments + (changes.analyzedAssignments || 0),
+        quizCompleted: current.quizCompleted + (changes.quizCompleted || 0),
+        xpEarned: current.xpEarned + (changes.xpEarned || 0),
+      }
+
+      writeStoredValue(key, nextActivity)
+      return nextActivity
+    })
   }
 
   useEffect(() => {
@@ -998,6 +1118,10 @@ function App() {
     }
     const nextSquad = 'PluggSquad'
     const nextWeeklyActivity = createInitialWeeklyActivity()
+    const nextMonthlyActivity = createInitialMonthlyActivity(
+      getMonthKey(),
+      getLevelProgress(nextProgress.xp).currentLevel,
+    )
 
     clearPluggArenaStorage()
     writeStoredValue(storageKeys.demoUsers, defaultDemoUsers)
@@ -1018,6 +1142,10 @@ function App() {
     writeStoredValue(
       `${getScopedKey(storageKeys.weeklyActivity, user)}.${nextWeeklyActivity.weekKey}`,
       nextWeeklyActivity,
+    )
+    writeStoredValue(
+      `${getScopedKey(storageKeys.monthlyActivity, user)}.${nextMonthlyActivity.monthKey}`,
+      nextMonthlyActivity,
     )
     writeStoredValue(
       getScopedKey(storageKeys.levelProgress, user),
@@ -1042,6 +1170,7 @@ function App() {
     setShopResetVersion((version) => version + 1)
     setDailyQuests(nextDailyQuests)
     setWeeklyActivity(nextWeeklyActivity)
+    setMonthlyActivity(nextMonthlyActivity)
     setLevelNotice(null)
     setQuizCompletedToday(0)
     setHumorMode(false)
@@ -1154,6 +1283,11 @@ function App() {
               streak={progress.streak}
               userId={user.id}
               weekKey={weeklyActivity.weekKey}
+            />
+            <MonthlyOverview activity={monthlyActivity} />
+            <Reminders
+              key={`${user.id}-${shopResetVersion}`}
+              userId={user.id}
             />
             <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
             <Leaderboard currentUser={progress.username} entries={leaderboard} />
