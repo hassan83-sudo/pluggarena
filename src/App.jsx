@@ -1310,18 +1310,6 @@ function App() {
               weeklyActivity={weeklyActivity}
             />
             <DailyQuests quests={dailyQuests} />
-            <StudyPlan
-              assignmentsWaiting={assignmentsWaiting}
-              key={user.id}
-              nextLevelXp={nextLevelXp}
-              quizRemaining={quizRemaining}
-              streak={progress.streak}
-              userId={user.id}
-            />
-            <Reminders
-              key={`${user.id}-${shopResetVersion}`}
-              userId={user.id}
-            />
             <button
               aria-expanded={showMoreHome}
               className="home-more-toggle"
@@ -1330,12 +1318,24 @@ function App() {
             >
               <span>
                 <strong>{showMoreHome ? 'Dölj extra kort' : 'Visa fler dashboardkort'}</strong>
-                <small>Shop, achievements, rapporter, fokus och socialt</small>
+                <small>Pluggschema, påminnelser, rapporter, fokus och socialt</small>
               </span>
               <span aria-hidden="true">{showMoreHome ? '−' : '+'}</span>
             </button>
             {showMoreHome && (
               <div className="home-more-content">
+                <StudyPlan
+                  assignmentsWaiting={assignmentsWaiting}
+                  key={user.id}
+                  nextLevelXp={nextLevelXp}
+                  quizRemaining={quizRemaining}
+                  streak={progress.streak}
+                  userId={user.id}
+                />
+                <Reminders
+                  key={`${user.id}-${shopResetVersion}`}
+                  userId={user.id}
+                />
                 <XPShop
                   key={`${user.id}-${shopResetVersion}`}
                   onPurchase={purchaseShopItem}

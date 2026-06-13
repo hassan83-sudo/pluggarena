@@ -5346,10 +5346,9 @@ summary {
 @media (max-width: 560px) {
   .app-shell {
     width: min(100% - 16px, 480px);
-    padding: 8px 0 102px;
+    padding: 6px 0 88px;
   }
 
-  .hero-copy,
   .panel,
   .stat-card {
     border-radius: 22px;
@@ -5357,32 +5356,63 @@ summary {
   }
 
   .hero-copy {
-    padding-bottom: 16px;
+    padding: 12px;
+    border-radius: 20px;
   }
 
   .hero-topline {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .hero-copy h1 {
-    font-size: 38px;
+    font-size: 30px;
+  }
+
+  .hero-copy .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .hero-copy .subtitle {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .hero-copy .ghost-button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 
   .top-navigation {
     right: 50%;
-    bottom: max(8px, env(safe-area-inset-bottom));
+    bottom: max(6px, env(safe-area-inset-bottom));
     width: calc(100% - 14px);
     margin: 0;
-    padding: 6px;
+    padding: 5px;
+    border-radius: 20px;
     overflow-x: auto;
   }
 
   .top-navigation button {
-    flex-basis: 72px;
-    min-width: 72px;
-    min-height: 60px;
-    padding: 5px 2px;
-    font-size: 10px;
+    flex-basis: 66px;
+    min-width: 66px;
+    min-height: 50px;
+    gap: 2px;
+    padding: 4px 2px;
+    border-radius: 14px;
+    font-size: 9px;
+  }
+
+  .navigation-icon {
+    font-size: 17px;
+  }
+
+  .arena-status-card {
+    gap: 9px 12px;
+    margin-top: 10px;
+    padding: 12px;
   }
 
   .ai-hub-summary {
@@ -5417,20 +5447,52 @@ summary {
   }
 
   .arena-status-values strong {
-    font-size: 22px;
+    font-size: 19px;
+  }
+
+  .arena-status-values span,
+  .arena-status-progress span,
+  .arena-status-action small {
+    font-size: 11px;
+  }
+
+  .arena-status-progress {
+    gap: 5px;
   }
 
   .dashboard-quick-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 5px;
   }
 
   .dashboard-quick-stats > div {
-    padding: 10px;
+    gap: 3px;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .dashboard-quick-stats span {
+    font-size: 10px;
   }
 
   .dashboard-quick-stats strong {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .arena-status-action button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .home-more-toggle {
+    margin-bottom: 8px;
+    padding: 12px 13px;
+    border-radius: 16px;
+  }
+
+  .home-more-toggle small {
+    font-size: 11px;
   }
 
   .achievements-heading {
