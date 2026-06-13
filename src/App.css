@@ -4482,6 +4482,103 @@ summary {
   padding: 0 16px;
 }
 
+.generated-quiz-card {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(141, 228, 255, 0.3);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(124, 92, 255, 0.2), transparent 48%),
+    rgba(7, 17, 31, 0.78);
+}
+
+.generated-quiz-card h3,
+.generated-quiz-card p {
+  margin: 0;
+}
+
+.generated-quiz-card h3 {
+  color: #ffffff;
+}
+
+.generated-quiz-card > div > p:last-child,
+.generated-quiz-result > p {
+  margin-top: 7px;
+  color: #aeb9d1;
+  line-height: 1.5;
+}
+
+.generated-quiz-card > button,
+.generated-quiz-footer > button {
+  min-height: 44px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c5cff, #4e8cff);
+}
+
+.generated-quiz-progress,
+.generated-quiz-footer {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.generated-quiz-progress > span {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #07111f;
+  background: #8de4ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.generated-quiz-question {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.generated-quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.generated-quiz-options button {
+  min-height: 54px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #dce6f8;
+  background: rgba(255, 255, 255, 0.055);
+  text-align: left;
+  white-space: normal;
+}
+
+.generated-quiz-options button.selected {
+  border-color: #8de4ff;
+  color: #ffffff;
+  background: rgba(141, 228, 255, 0.16);
+  box-shadow: 0 0 0 1px rgba(141, 228, 255, 0.18);
+}
+
+.generated-quiz-footer small {
+  color: #91a0ba;
+  line-height: 1.4;
+}
+
+.generated-quiz-footer > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.generated-quiz-result strong {
+  color: #8de4ff;
+}
+
 .assignment-list {
   display: grid;
   gap: 8px;
@@ -4549,6 +4646,10 @@ summary {
   }
 
   .assignment-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .generated-quiz-options {
     grid-template-columns: 1fr;
   }
 

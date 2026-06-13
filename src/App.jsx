@@ -1143,6 +1143,14 @@ function App() {
     incrementAchievementStat('quizCompleted')
   }
 
+  function awardGeneratedQuizXp({ xp }) {
+    addXp(xp)
+    setQuizCompletedToday((count) => count + 1)
+    recordDailyQuestProgress({ quizCompleted: 1, xpEarned: xp })
+    recordWeeklyActivity({ quizCompleted: 1, xpEarned: xp })
+    incrementAchievementStat('quizCompleted')
+  }
+
   function challengeFriend(friend) {
     writeStoredValue(
       getScopedKey(storageKeys.lastFriendChallenge, user),
@@ -1439,6 +1447,7 @@ function App() {
                 recordWeeklyActivity({ analyzedAssignments: 1 })
               }}
               onAssignmentsChange={handleAssignmentsChange}
+              onGeneratedQuizComplete={awardGeneratedQuizXp}
               user={{ id: user.id, name: progress.username }}
             />
           </div>

@@ -62,17 +62,34 @@ function getBattleStats(userId) {
 function getQuizStats(userId) {
   const quizResults = readValue(`pluggarena.quizResults.${userId}`, [])
   const examResults = readValue(`pluggarena.examResults.${userId}`, [])
+  const generatedQuizzes = readValue(
+    `pluggarena.generatedQuizzes.${userId}`,
+    [],
+  ).filter((quiz) => quiz.completedAt)
   const correctAnswers = quizResults.filter((result) => result.isCorrect).length
+  const generatedCorrectAnswers = generatedQuizzes.reduce(
+    (total, quiz) => total + (Number(quiz.correctAnswers) || 0),
+    0,
+  )
+  const generatedQuestions = generatedQuizzes.reduce(
+    (total, quiz) =>
+      total + (Number(quiz.totalQuestions) || quiz.questions?.length || 0),
+    0,
+  )
+  const totalQuestions = quizResults.length + generatedQuestions
 
   return {
-    accuracy: quizResults.length
-      ? Math.round((correctAnswers / quizResults.length) * 100)
+    accuracy: totalQuestions
+      ? Math.round(
+          ((correctAnswers + generatedCorrectAnswers) / totalQuestions) * 100,
+        )
       : 0,
     bestExam: examResults.length
       ? Math.max(...examResults.map((result) => result.percentage))
       : 0,
     exams: examResults.length,
-    questions: quizResults.length,
+    generatedQuizzes: generatedQuizzes.length,
+    questions: totalQuestions,
   }
 }
 
@@ -215,6 +232,7 @@ function StatisticsCenter({ streak, userId, xp }) {
         <div className="statistics-detail-card">
           <strong>Quiz och prov</strong>
           <span>{quizStats.questions} quizfrågor besvarade</span>
+          <span>{quizStats.generatedQuizzes} AI-genererade quiz</span>
           <span>{quizStats.exams} genomförda prov</span>
           <span>Personligt rekord: {quizStats.bestExam}%</span>
         </div>

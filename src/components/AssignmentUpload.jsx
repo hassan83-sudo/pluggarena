@@ -6,6 +6,7 @@ import {
   saveAssignmentAnalysis,
 } from '../lib/assignments.js'
 import { isSupabaseConfigured } from '../lib/supabase.js'
+import GeneratedAssignmentQuiz from './GeneratedAssignmentQuiz.jsx'
 
 const maxSupabaseFileSize = 8 * 1024 * 1024
 const maxLocalFileSize = 3 * 1024 * 1024
@@ -74,6 +75,7 @@ function AssignmentUpload({
   humorMode = false,
   onAnalysisComplete = () => {},
   onAssignmentsChange,
+  onGeneratedQuizComplete = () => {},
   user,
 }) {
   const [file, setFile] = useState(null)
@@ -446,6 +448,13 @@ function AssignmentUpload({
                 Visa nästa ledtråd
               </button>
             )}
+            <GeneratedAssignmentQuiz
+              key={`${selectedAssignment?.id || selectedAssignment?.fileName}-${analysis.subject}-${analysis.taskType}`}
+              analysis={analysis}
+              assignment={selectedAssignment}
+              onComplete={onGeneratedQuizComplete}
+              userId={user.id}
+            />
           </>
         ) : (
           <p className="assignment-muted">
