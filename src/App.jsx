@@ -1,16 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import './App.css'
 import AIStudyBuddy from './components/AIStudyBuddy.jsx'
 import AIStudyBuddyHub from './components/AIStudyBuddyHub.jsx'
 import AICoach from './components/AICoach.jsx'
 import Achievements from './components/Achievements.jsx'
-import AssignmentUpload from './components/AssignmentUpload.jsx'
 import ArenaSeason from './components/ArenaSeason.jsx'
-import BattleMode from './components/BattleMode.jsx'
-import Classroom from './components/Classroom.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import DailyQuests from './components/DailyQuests.jsx'
-import ExamTraining from './components/ExamTraining.jsx'
 import FocusMode from './components/FocusMode.jsx'
 import FriendsPanel from './components/FriendsPanel.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
@@ -19,19 +22,25 @@ import Login from './components/Login.jsx'
 import MonthlyOverview from './components/MonthlyOverview.jsx'
 import ProfileSettings from './components/ProfileSettings.jsx'
 import Progress from './components/Progress.jsx'
-import Profile from './components/Profile.jsx'
 import Quiz from './components/Quiz.jsx'
 import Reminders from './components/Reminders.jsx'
 import Rewards from './components/Rewards.jsx'
 import Squad from './components/Squad.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
-import StudyCalendar from './components/StudyCalendar.jsx'
-import StatisticsCenter from './components/StatisticsCenter.jsx'
 import WeeklyReport from './components/WeeklyReport.jsx'
 import XPShop from './components/XPShop.jsx'
 import { questionBank, subjects } from './data/questions.js'
+import { listAssignments } from './lib/assignments.js'
 import { isSupabaseConfigured, supabase } from './lib/supabase.js'
 import { getLevelProgress } from './lib/levels.js'
+
+const AssignmentUpload = lazy(() => import('./components/AssignmentUpload.jsx'))
+const BattleMode = lazy(() => import('./components/BattleMode.jsx'))
+const Classroom = lazy(() => import('./components/Classroom.jsx'))
+const ExamTraining = lazy(() => import('./components/ExamTraining.jsx'))
+const Profile = lazy(() => import('./components/Profile.jsx'))
+const StatisticsCenter = lazy(() => import('./components/StatisticsCenter.jsx'))
+const StudyCalendar = lazy(() => import('./components/StudyCalendar.jsx'))
 
 const storageKeys = {
   demoUsers: 'pluggarena.demoUsers',
@@ -295,18 +304,6 @@ function readMonthlyActivity(user, highestLevel = 0) {
   return activity
 }
 
-function getLevel(xp) {
-  if (xp >= 1000) {
-    return 'Genius'
-  }
-
-  if (xp >= 500) {
-    return 'Smart'
-  }
-
-  return 'Rookie'
-}
-
 function getBadges({ correctAnswers, streak, xp }) {
   return [
     { name: 'Rookie Badge', unlocked: xp >= 100 },
@@ -440,11 +437,12 @@ function App() {
   const [quizCompletedToday, setQuizCompletedToday] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState('Matematik')
   const [shopResetVersion, setShopResetVersion] = useState(0)
+  const [showMoreHome, setShowMoreHome] = useState(false)
   const todayKey = getTodayKey()
-  const level = getLevel(progress.xp)
+  const levelProgress = getLevelProgress(progress.xp)
+  const level = levelProgress.currentLevel
   const hasClaimedToday = progress.lastRewardDate === todayKey
-  const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : progress.xp
-  const nextLevelXp = Math.max(nextLevelTarget - progress.xp, 0)
+  const nextLevelXp = levelProgress.xpToNext
   const quizRemaining = Math.max(dailyQuizTarget - quizCompletedToday, 0)
   const rewardXpRemaining = Math.max(rewardGoalXp - progress.xp, 0)
   const badges = getBadges(progress)
@@ -744,6 +742,30 @@ function App() {
       return nextStats
     })
   }, [user])
+
+  useEffect(() => {
+    if (!user?.id) {
+      return undefined
+    }
+
+    let isCancelled = false
+
+    listAssignments(user.id)
+      .then((items) => {
+        if (!isCancelled) {
+          handleAssignmentsChange(items)
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setAssignmentsWaiting(0)
+        }
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [handleAssignmentsChange, user?.id])
 
   function incrementAchievementStat(key) {
     setAchievementStats((current) => {
@@ -1225,6 +1247,7 @@ function App() {
         assignmentsWaiting={assignmentsWaiting}
         hasClaimedToday={hasClaimedToday}
         level={level}
+        levelProgress={levelProgress}
         nextLevelXp={nextLevelXp}
         onClaimDailyReward={claimDailyReward}
         onLogout={handleLogout}
@@ -1259,7 +1282,15 @@ function App() {
         </nav>
       </Dashboard>
 
-      <section className="tab-content" aria-live="polite">
+      <Suspense
+        fallback={(
+          <section className="panel view-loading-panel" aria-live="polite">
+            <p className="eyebrow">PluggArena</p>
+            <h2>Laddar vy...</h2>
+          </section>
+        )}
+      >
+        <section className="tab-content" aria-live="polite">
         {activeView === 'arena' && (
           <div className="tab-view arena-view" id="arena-panel" role="tabpanel">
             <AIStudyBuddyHub
@@ -1278,17 +1309,6 @@ function App() {
               userId={user.id}
               weeklyActivity={weeklyActivity}
             />
-            <XPShop
-              key={`${user.id}-${shopResetVersion}`}
-              onPurchase={purchaseShopItem}
-              userId={user.id}
-              xp={progress.xp}
-            />
-            <Achievements
-              stats={achievementStats}
-              streak={progress.streak}
-              xp={progress.xp}
-            />
             <DailyQuests quests={dailyQuests} />
             <StudyPlan
               assignmentsWaiting={assignmentsWaiting}
@@ -1298,31 +1318,58 @@ function App() {
               streak={progress.streak}
               userId={user.id}
             />
-            <WeeklyReport
-              activity={weeklyActivity}
-              key={`${user.id}-${weeklyActivity.weekKey}`}
-              streak={progress.streak}
-              userId={user.id}
-              weekKey={weeklyActivity.weekKey}
-            />
-            <MonthlyOverview activity={monthlyActivity} />
-            <ArenaSeason
-              seasonXp={monthlyActivity.xpEarned}
-              userId={user.id}
-              username={progress.username}
-            />
             <Reminders
               key={`${user.id}-${shopResetVersion}`}
               userId={user.id}
             />
-            <FocusMode
-              key={`${user.id}-${shopResetVersion}`}
-              onComplete={awardFocusXp}
-              userId={user.id}
-            />
-            <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
-            <Leaderboard currentUser={progress.username} entries={leaderboard} />
-            <FriendsPanel friends={friends} onChallenge={challengeFriend} />
+            <button
+              aria-expanded={showMoreHome}
+              className="home-more-toggle"
+              onClick={() => setShowMoreHome((current) => !current)}
+              type="button"
+            >
+              <span>
+                <strong>{showMoreHome ? 'Dölj extra kort' : 'Visa fler dashboardkort'}</strong>
+                <small>Shop, achievements, rapporter, fokus och socialt</small>
+              </span>
+              <span aria-hidden="true">{showMoreHome ? '−' : '+'}</span>
+            </button>
+            {showMoreHome && (
+              <div className="home-more-content">
+                <XPShop
+                  key={`${user.id}-${shopResetVersion}`}
+                  onPurchase={purchaseShopItem}
+                  userId={user.id}
+                  xp={progress.xp}
+                />
+                <Achievements
+                  stats={achievementStats}
+                  streak={progress.streak}
+                  xp={progress.xp}
+                />
+                <WeeklyReport
+                  activity={weeklyActivity}
+                  key={`${user.id}-${weeklyActivity.weekKey}`}
+                  streak={progress.streak}
+                  userId={user.id}
+                  weekKey={weeklyActivity.weekKey}
+                />
+                <MonthlyOverview activity={monthlyActivity} />
+                <ArenaSeason
+                  seasonXp={monthlyActivity.xpEarned}
+                  userId={user.id}
+                  username={progress.username}
+                />
+                <FocusMode
+                  key={`${user.id}-${shopResetVersion}`}
+                  onComplete={awardFocusXp}
+                  userId={user.id}
+                />
+                <LevelRewards levelNotice={levelNotice} xp={progress.xp} />
+                <Leaderboard currentUser={progress.username} entries={leaderboard} />
+                <FriendsPanel friends={friends} onChallenge={challengeFriend} />
+              </div>
+            )}
           </div>
         )}
 
@@ -1375,16 +1422,16 @@ function App() {
           </div>
         )}
 
-        <div
-          className="tab-view assignments-view"
-          hidden={activeView !== 'assignments'}
-          id="assignments-panel"
-          role="tabpanel"
-        >
-          <div className="assignment-section-heading">
-            <p className="eyebrow">Uppgiftsverktyg</p>
-            <h2>Ladda upp och analysera en uppgift</h2>
-          </div>
+        {activeView === 'assignments' && (
+          <div
+            className="tab-view assignments-view"
+            id="assignments-panel"
+            role="tabpanel"
+          >
+            <div className="assignment-section-heading">
+              <p className="eyebrow">Uppgiftsverktyg</p>
+              <h2>Ladda upp och analysera en uppgift</h2>
+            </div>
             <AssignmentUpload
               humorMode={humorMode}
               onAnalysisComplete={() => {
@@ -1394,7 +1441,8 @@ function App() {
               onAssignmentsChange={handleAssignmentsChange}
               user={{ id: user.id, name: progress.username }}
             />
-        </div>
+          </div>
+        )}
 
         {activeView === 'battle' && (
           <div className="tab-view battle-view" id="battle-panel" role="tabpanel">
@@ -1458,19 +1506,22 @@ function App() {
             />
           </div>
         )}
-      </section>
+        </section>
+      </Suspense>
 
-      <section className="utility-sections" aria-label="Squad, belöningar och profil">
-        <Squad
-          members={demoUsers.map((entry) => entry.name)}
-          onCreateSquad={saveSquad}
-          onJoinSquad={saveSquad}
-          squad={squad}
-          userXp={progress.xp}
-        />
-        <Rewards xp={progress.xp} />
-        <ProfileSettings onResetDemoData={resetDemoData} />
-      </section>
+      {activeView === 'profile' && (
+        <section className="utility-sections" aria-label="Squad, belöningar och profil">
+          <Squad
+            members={demoUsers.map((entry) => entry.name)}
+            onCreateSquad={saveSquad}
+            onJoinSquad={saveSquad}
+            squad={squad}
+            userXp={progress.xp}
+          />
+          <Rewards xp={progress.xp} />
+          <ProfileSettings onResetDemoData={resetDemoData} />
+        </section>
+      )}
     </main>
   )
 }

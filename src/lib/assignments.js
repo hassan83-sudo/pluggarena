@@ -5,14 +5,24 @@ const assignmentBucket = 'assignments'
 
 function readLocalAssignments() {
   try {
-    return JSON.parse(window.localStorage.getItem(localAssignmentsKey) || '[]')
+    const value = JSON.parse(
+      window.localStorage.getItem(localAssignmentsKey) || '[]',
+    )
+    return Array.isArray(value) ? value : []
   } catch {
     return []
   }
 }
 
 function writeLocalAssignments(assignments) {
-  window.localStorage.setItem(localAssignmentsKey, JSON.stringify(assignments))
+  try {
+    window.localStorage.setItem(
+      localAssignmentsKey,
+      JSON.stringify(assignments),
+    )
+  } catch {
+    // Local assignment state remains usable if storage is unavailable.
+  }
 }
 
 function createId() {

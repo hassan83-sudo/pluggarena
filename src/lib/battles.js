@@ -36,15 +36,31 @@ function readLocal(key, fallback) {
       window.localStorage.setItem(key, JSON.stringify(parsedValue))
     }
 
-    return parsedValue
+    if (Array.isArray(fallback)) {
+      return Array.isArray(parsedValue) ? parsedValue : fallback
+    }
+
+    if (fallback && typeof fallback === 'object') {
+      return parsedValue &&
+        typeof parsedValue === 'object' &&
+        !Array.isArray(parsedValue)
+        ? { ...fallback, ...parsedValue }
+        : fallback
+    }
+
+    return parsedValue ?? fallback
   } catch {
     return fallback
   }
 }
 
 function writeLocal(key, value) {
-  window.localStorage.setItem(key, JSON.stringify(value))
-  window.dispatchEvent(new CustomEvent('pluggarena:battle-change'))
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+    window.dispatchEvent(new CustomEvent('pluggarena:battle-change'))
+  } catch {
+    // Battle state remains in memory if localStorage is unavailable.
+  }
 }
 
 function createCode() {

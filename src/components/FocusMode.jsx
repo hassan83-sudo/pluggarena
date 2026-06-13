@@ -23,7 +23,9 @@ function readFocusStats(userId) {
     const value = window.localStorage.getItem(getStorageKey(userId))
     const parsedValue = value ? JSON.parse(value) : null
 
-    return parsedValue && typeof parsedValue === 'object'
+    return parsedValue &&
+      typeof parsedValue === 'object' &&
+      !Array.isArray(parsedValue)
       ? { ...initialStats, ...parsedValue }
       : initialStats
   } catch {

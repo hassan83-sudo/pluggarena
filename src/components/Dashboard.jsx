@@ -3,6 +3,7 @@ function Dashboard({
   children,
   hasClaimedToday,
   level,
+  levelProgress,
   nextLevelXp,
   onClaimDailyReward,
   onLogout,
@@ -13,11 +14,6 @@ function Dashboard({
   username,
   xp,
 }) {
-  const nextLevelTarget = level === 'Rookie' ? 500 : level === 'Smart' ? 1000 : xp
-  const progress = level === 'Genius'
-    ? 100
-    : Math.min(Math.round((xp / nextLevelTarget) * 100), 100)
-
   return (
     <header className={showStats ? 'dashboard' : 'dashboard dashboard-tabs-only'}>
       <div className="hero-copy">
@@ -53,11 +49,13 @@ function Dashboard({
               <div>
                 <span>Progress till nästa nivå</span>
                 <small>
-                  {level === 'Genius' ? 'Maxnivå' : `${progress}%`}
+                  {levelProgress.nextLevel
+                    ? `${levelProgress.progress}%`
+                    : 'Maxnivå'}
                 </small>
               </div>
               <div className="progress-track">
-                <span style={{ width: `${progress}%` }} />
+                <span style={{ width: `${levelProgress.progress}%` }} />
               </div>
             </div>
 

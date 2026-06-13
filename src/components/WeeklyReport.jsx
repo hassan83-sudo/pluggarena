@@ -7,7 +7,15 @@ function getStorageKey(userId, weekKey) {
 function readStoredReport(userId, weekKey) {
   try {
     const value = window.localStorage.getItem(getStorageKey(userId, weekKey))
-    return value ? JSON.parse(value) : null
+    const parsedValue = value ? JSON.parse(value) : null
+
+    return parsedValue &&
+      typeof parsedValue === 'object' &&
+      !Array.isArray(parsedValue) &&
+      parsedValue.activity &&
+      typeof parsedValue.activity === 'object'
+      ? parsedValue
+      : null
   } catch {
     return null
   }

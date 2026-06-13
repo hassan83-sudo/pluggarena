@@ -351,6 +351,58 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.home-more-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(141, 228, 255, 0.2);
+  border-radius: 18px;
+  color: var(--text-main);
+  background:
+    linear-gradient(135deg, rgba(55, 229, 255, 0.08), rgba(168, 117, 255, 0.09)),
+    var(--card-bg);
+  text-align: left;
+}
+
+.home-more-toggle > span:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.home-more-toggle small {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.home-more-toggle > span:last-child {
+  display: grid;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 12px;
+  color: #07111f;
+  background: linear-gradient(135deg, #8de4ff, #a875ff);
+  font-size: 20px;
+  font-weight: 1000;
+}
+
+.home-more-content {
+  display: grid;
+  min-width: 0;
+}
+
+.view-loading-panel {
+  min-height: 220px;
+  margin-bottom: 12px;
+  place-content: center;
+  text-align: center;
+}
+
 .arena-view .leaderboard-panel,
 .quiz-view .quiz-panel {
   grid-column: 1 / -1;
@@ -5142,23 +5194,30 @@ summary {
   right: 50%;
   bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 50;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
   gap: 5px;
-  width: min(620px, calc(100% - 20px));
+  width: min(760px, calc(100% - 20px));
   margin: 0;
   padding: 7px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
   border: 1px solid rgba(141, 228, 255, 0.16);
   border-radius: 24px;
   background: rgba(13, 18, 34, 0.96);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
   transform: translateX(50%);
   backdrop-filter: blur(18px);
+  scrollbar-width: none;
+}
+
+.top-navigation::-webkit-scrollbar {
+  display: none;
 }
 
 .top-navigation button {
   display: grid;
-  min-width: 0;
+  flex: 0 0 76px;
+  min-width: 76px;
   min-height: 58px;
   place-items: center;
   align-content: center;
@@ -5315,10 +5374,12 @@ summary {
     width: calc(100% - 14px);
     margin: 0;
     padding: 6px;
-    overflow: visible;
+    overflow-x: auto;
   }
 
   .top-navigation button {
+    flex-basis: 72px;
+    min-width: 72px;
     min-height: 60px;
     padding: 5px 2px;
     font-size: 10px;

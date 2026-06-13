@@ -10,7 +10,21 @@ const emptyActivity = {
 function readValue(key, fallback) {
   try {
     const value = window.localStorage.getItem(key)
-    return value ? JSON.parse(value) : fallback
+    const parsedValue = value ? JSON.parse(value) : fallback
+
+    if (Array.isArray(fallback)) {
+      return Array.isArray(parsedValue) ? parsedValue : fallback
+    }
+
+    if (fallback && typeof fallback === 'object') {
+      return parsedValue &&
+        typeof parsedValue === 'object' &&
+        !Array.isArray(parsedValue)
+        ? { ...fallback, ...parsedValue }
+        : fallback
+    }
+
+    return parsedValue ?? fallback
   } catch {
     return fallback
   }
@@ -21,7 +35,7 @@ function readPeriodData(prefix, periodKey) {
     return Object.keys(window.localStorage)
       .filter((key) => key.startsWith(prefix))
       .map((key) => readValue(key, null))
-      .filter(Boolean)
+      .filter((value) => value && typeof value === 'object')
       .sort((a, b) => (a[periodKey] || '').localeCompare(b[periodKey] || ''))
       .slice(-6)
   } catch {
