@@ -2918,6 +2918,247 @@
   margin-top: 0;
 }
 
+.statistics-center-page {
+  display: grid;
+  gap: 12px;
+}
+
+.statistics-header-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  border-color: rgba(141, 228, 255, 0.32);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(168, 117, 255, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(55, 229, 255, 0.12), rgba(168, 117, 255, 0.09) 70%, transparent),
+    var(--card-bg);
+}
+
+.statistics-header-panel h2 {
+  margin-top: 3px;
+  font-size: 32px;
+}
+
+.statistics-header-panel > div:first-child > p:last-child {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.statistics-header-level {
+  display: grid;
+  min-width: 116px;
+  padding: 12px 16px;
+  border: 1px solid rgba(141, 228, 255, 0.24);
+  border-radius: 18px;
+  background: rgba(55, 229, 255, 0.08);
+  text-align: center;
+}
+
+.statistics-header-level span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.statistics-header-level strong {
+  margin-top: 3px;
+  color: #8de4ff;
+  font-size: 28px;
+}
+
+.statistics-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.statistics-overview-grid article {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(168, 117, 255, 0.2);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.07), rgba(168, 117, 255, 0.07)),
+    var(--card-bg);
+}
+
+.statistics-overview-grid article > span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(55, 229, 255, 0.17), rgba(168, 117, 255, 0.21));
+  font-size: 20px;
+}
+
+.statistics-overview-grid article > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.statistics-overview-grid small {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.statistics-overview-grid strong {
+  overflow: hidden;
+  color: var(--text-main);
+  font-size: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statistics-charts-panel,
+.statistics-details-panel,
+.statistics-records-panel {
+  border-color: rgba(168, 117, 255, 0.26);
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.07), rgba(168, 117, 255, 0.08) 70%, transparent),
+    var(--card-bg);
+}
+
+.statistics-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.statistics-chart {
+  padding: 14px;
+  border: 1px solid rgba(141, 228, 255, 0.15);
+  border-radius: 20px;
+  background: rgba(7, 17, 31, 0.4);
+}
+
+.statistics-chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.statistics-chart-heading strong {
+  color: var(--text-main);
+}
+
+.statistics-chart-heading span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.statistics-bars {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  min-height: 190px;
+}
+
+.statistics-bar-item {
+  display: grid;
+  grid-template-rows: auto 140px auto;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-items: center;
+}
+
+.statistics-bar-item > strong {
+  color: #8de4ff;
+  font-size: 10px;
+}
+
+.statistics-bar-item > div {
+  display: flex;
+  width: 100%;
+  align-items: end;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.statistics-bar-item > div span {
+  display: block;
+  width: 100%;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(180deg, #a875ff, #37e5ff);
+}
+
+.statistics-bar-item small {
+  overflow: hidden;
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statistics-details-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.statistics-detail-card {
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+  border: 1px solid rgba(141, 228, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(7, 17, 31, 0.38);
+}
+
+.statistics-detail-card strong {
+  color: #8de4ff;
+}
+
+.statistics-detail-card span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.statistics-record-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.statistics-record-grid article {
+  display: grid;
+  gap: 5px;
+  padding: 15px;
+  border: 1px solid rgba(168, 117, 255, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(55, 229, 255, 0.08), rgba(168, 117, 255, 0.09)),
+    rgba(7, 17, 31, 0.38);
+}
+
+.statistics-record-grid span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.statistics-record-grid strong {
+  color: var(--text-main);
+  font-size: 23px;
+}
+
 .buddy-main-panel {
   margin-bottom: 12px;
   border-color: rgba(141, 228, 255, 0.3);
@@ -4326,6 +4567,16 @@ summary {
   .exam-answer-grid {
     grid-template-columns: 1fr;
   }
+
+  .statistics-overview-grid,
+  .statistics-details-panel,
+  .statistics-record-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statistics-chart-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -4657,6 +4908,34 @@ summary {
     grid-column: 1 / -1;
     width: 100%;
     text-align: left;
+  }
+
+  .statistics-header-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .statistics-header-panel h2 {
+    font-size: 26px;
+  }
+
+  .statistics-header-level {
+    min-width: 88px;
+    padding: 10px;
+  }
+
+  .statistics-overview-grid,
+  .statistics-details-panel,
+  .statistics-record-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statistics-bars {
+    gap: 5px;
+  }
+
+  .statistics-bar-item {
+    grid-template-rows: auto 110px auto;
   }
 
   .arena-status-card {
